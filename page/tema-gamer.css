@@ -1,0 +1,131 @@
+/* ===================== TEMA GAMER (inspirado em sites de eSports) =====================
+   Grafite quase preto, verde-limão do logo como destaque, amarelo secundário,
+   quinas cortadas, títulos em Barlow caixa alta, display em Lilita One com sombra neon. */
+.mvp {
+  --bg: #0b1117; --panel: #141c25; --panel2: #1b2531; --line: #243140; --line2: #2f3e50;
+  --fg: #eef3f8; --muted: #9aa3b2; --dim: #66717f;
+  --lime: #85fd05; --lime-d: #4f9c00; --gold: #ffbe18; --green: #85fd05;
+  --sans: "Poppins", "Segoe UI", system-ui, sans-serif;
+  --display: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --hero: "Lilita One", "Barlow", sans-serif;
+  --cut: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  --cut-s: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  --trap: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
+  font-family: var(--sans);
+  background: var(--bg);
+}
+
+/* ---------- títulos ---------- */
+.mvp h1, .mvp h2, .mvp h3 { font-family: var(--display); }
+.mvp .sec-title { align-items: flex-end; margin-bottom: 14px; }
+.mvp .sec-title h2 { font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; position: relative; padding-bottom: 10px; }
+.mvp .sec-title h2::after { content: ""; position: absolute; left: 0; bottom: 0; width: 46px; height: 4px; background: var(--lime); transform: skewX(-30deg); transform-origin: left; }
+.mvp .eyebrow, .mvp .tag, .mvp .t, .mvp .why-h, .mvp .aw-label, .mvp .tile .lab, .mvp .team-h, .mvp .side-foot .lab, .mvp .dmgchart .h { font-family: var(--display); letter-spacing: .12em; }
+
+/* ---------- menu lateral ---------- */
+.mvp .side { background: #080d12; border-right: 1px solid #16202b; }
+.mvp .nav button { font-family: var(--display); font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: .04em; border-radius: 0; }
+.mvp .nav button svg { color: var(--dim); }
+.mvp .nav button:hover { background: rgba(133,253,5,.05); color: var(--fg); }
+.mvp .nav button[aria-selected="true"] { background: linear-gradient(90deg, rgba(133,253,5,.16), rgba(133,253,5,0) 85%); color: var(--fg); }
+.mvp .nav button[aria-selected="true"]::before { background: var(--lime); box-shadow: 0 0 12px var(--lime); }
+.mvp .nav button[aria-selected="true"] svg { color: var(--lime); }
+.mvp .side-foot { border-top-color: #16202b; }
+.mvp .side-foot .v { color: var(--lime); font-family: var(--display); font-size: 16px; }
+
+/* ---------- topo (hero) ---------- */
+.mvp .top.hero-g { position: relative; border-bottom: 0; overflow: hidden; isolation: isolate;
+  background:
+    linear-gradient(90deg, rgba(11,17,23,.97) 0%, rgba(11,17,23,.86) 42%, rgba(11,17,23,.35) 100%),
+    radial-gradient(60% 120% at 85% 40%, rgba(133,253,5,.22), transparent 70%),
+    var(--hero-img, url("img/hero-agora.jpg")) right 30% / cover no-repeat, #0b1117; }
+.mvp .top.hero-g::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: var(--lime);
+  clip-path: polygon(0 100%, 0 0, 38% 0, 40% 100%, 60% 100%, 62% 0, 100% 0, 100% 100%); opacity: .9; }
+.mvp .hero-in { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-end; justify-content: space-between; padding-block: 44px 38px; }
+.mvp .hero-txt { min-width: 0; display: grid; gap: 10px; }
+.mvp .tag-live { justify-self: start; font-family: var(--display); font-weight: 800; font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--lime); background: rgba(133,253,5,.12); padding: 6px 14px; clip-path: var(--cut-s); }
+.mvp .hero-title { margin: 0; font-family: var(--hero); font-weight: 400; font-size: clamp(38px, 6.4vw, 78px); line-height: .95; text-transform: uppercase; color: #fff;
+  text-shadow: -1px 5px 0 rgba(133,253,5,.7); letter-spacing: .5px; text-wrap: balance; }
+.mvp .top .lede { font-size: 15px; color: #c9d1db; max-width: 60ch; }
+.mvp .top .lede b { color: var(--lime); }
+.mvp .weekpick label { font-family: var(--display); font-weight: 700; color: var(--muted); }
+.mvp .dash-select { background-color: rgba(8,13,18,.8); border: 1px solid var(--line2); border-radius: 0; clip-path: var(--cut-s); font-family: var(--display); font-weight: 700; font-size: 15px; }
+
+/* ---------- cartões com quina cortada ---------- */
+.mvp .card, .mvp details.match, .mvp .sc, .mvp .why, .mvp .tile { border: 0; border-radius: 0; clip-path: var(--cut); }
+.mvp .card, .mvp details.match { background: var(--panel); }
+.mvp .tile { clip-path: var(--cut-s); background: var(--panel2); }
+.mvp .sc { background: var(--panel2); box-shadow: inset 0 0 0 1px var(--line); }
+.mvp .why { background: #0f161e; }
+.mvp .latest-h { border-bottom-color: var(--line); background: linear-gradient(90deg, rgba(133,253,5,.06), transparent 60%); }
+.mvp .latest-h .big { font-family: var(--hero); font-weight: 400; font-size: 30px; text-transform: uppercase; letter-spacing: .5px; }
+.mvp .latest-h .big.win { color: var(--lime); }
+
+/* destaque: pior e MVP */
+.mvp .spot.worst { background: linear-gradient(115deg, rgba(232,89,79,.28), var(--panel) 62%); box-shadow: none; }
+.mvp .spot.best { background: linear-gradient(115deg, rgba(133,253,5,.18), var(--panel) 62%); }
+.mvp .spot .tag { font-weight: 800; }
+.mvp .spot .who { font-family: var(--hero); font-weight: 400; font-size: 32px; text-transform: uppercase; letter-spacing: .5px; }
+.mvp .spot.best .who { font-size: 24px; }
+.mvp .spot .big { font-family: var(--hero); font-weight: 400; }
+.mvp .spot.best .big, .mvp .spot.best .tag { color: var(--lime); }
+.mvp .portrait { border-radius: 0; clip-path: var(--cut-s); border: 0; }
+.mvp .spot.worst .portrait { box-shadow: none; outline: 0; }
+
+/* awards */
+.mvp .aw.good .t { color: var(--lime); }
+.mvp .aw-label.good { color: var(--lime); }
+.mvp .aw img, .mvp .aw .ph { border-radius: 0; clip-path: var(--cut-s); }
+
+/* ---------- tabelas ---------- */
+.mvp table.rank th { font-family: var(--display); font-weight: 800; font-size: 12px; letter-spacing: .1em; color: var(--muted); background: #10171f; }
+.mvp table.rank td { border-bottom-color: #1d2733; }
+.mvp table.rank tbody tr:hover td { background: rgba(133,253,5,.04); }
+.mvp table.rank tr.first td { background: rgba(232,89,79,.12); }
+.mvp .pl img, .mvp .pl .ph { border-radius: 0; clip-path: var(--cut-s); }
+.mvp .pl b { font-family: var(--display); font-weight: 700; font-size: 15px; }
+.mvp .ppp b { font-family: var(--display); font-size: 16px; }
+.mvp .rk { font-family: var(--display); font-weight: 800; }
+
+/* ---------- partidas ---------- */
+.mvp .match.win .stripe { background: var(--lime); }
+.mvp .match.win .res b { color: var(--lime); }
+.mvp .res b { font-family: var(--display); font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: .06em; }
+.mvp .score { font-family: var(--display); font-size: 20px; }
+.mvp .score .us { color: var(--lime); }
+.mvp .face img, .mvp .face .ph, .mvp .prow .ico img, .mvp .prow .ico .ph { border-radius: 0; clip-path: var(--cut-s); }
+.mvp .face2.us .face img, .mvp .face2.us .face .ph { box-shadow: none; outline: 2px solid var(--lime); outline-offset: 1px; clip-path: none; }
+.mvp .prow.us { background: linear-gradient(90deg, rgba(133,253,5,.08), transparent 70%); }
+.mvp .team.azul .team-h .nm { color: #4fb3ff; }
+.mvp .k { color: var(--lime); }
+.mvp .board-foot a { color: var(--lime); }
+
+/* ---------- botões, abas e seletores ---------- */
+.mvp .btn, .mvp .pick, .mvp .seg button, .mvp .legend button { border-radius: 0; font-family: var(--display); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.mvp .btn { clip-path: var(--trap); border: 0; background: var(--panel2); padding: 10px 22px; }
+.mvp .btn:hover { background: var(--line2); }
+.mvp .btn.primary { background: var(--lime); color: #0b1117; font-weight: 800; font-size: 15px; padding: 12px 30px; }
+.mvp .btn.primary:hover { background: #a6ff3a; }
+.mvp .pick { clip-path: var(--cut-s); border: 0; background: var(--panel2); padding: 8px 14px; }
+.mvp .pick[aria-pressed="true"] { background: var(--lime); color: #0b1117; }
+.mvp .seg { border: 0; border-radius: 0; gap: 4px; background: transparent; }
+.mvp .seg button { clip-path: var(--cut-s); background: var(--panel2); }
+.mvp .seg button[aria-pressed="true"] { background: var(--lime); color: #0b1117; }
+.mvp input.txt { border-radius: 0; clip-path: var(--cut-s); border: 0; background: var(--panel2); }
+.mvp .tcard.azul { border-top: 0; box-shadow: inset 0 4px 0 #4fb3ff; }
+.mvp .tcard.vermelho { border-top: 0; box-shadow: inset 0 4px 0 var(--red); }
+.mvp .tcard h3 { font-family: var(--hero); font-weight: 400; font-size: 22px; letter-spacing: .5px; }
+.mvp .tcard.azul h3 { color: #4fb3ff; }
+.mvp .tcard .m { font-family: var(--display); font-size: 18px; }
+
+/* ---------- medalhas de título ---------- */
+.mvp .bdg { border-radius: 0; clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 12px); font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: .02em; padding-left: 4px; }
+.mvp .bdg .ic { border-radius: 0; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); width: 26px; height: 26px; }
+.mvp .bdg.bom { border-color: #8a6a14; color: #ffd76a; background: #18150c; }
+.mvp .bdg.bom .ic { background: #3a2f0e; }
+.mvp .bdg.pos { padding-left: 11px; }
+
+/* ---------- vazio e regras ---------- */
+.mvp .empty { border-radius: 0; clip-path: var(--cut); border: 0; background: var(--panel); }
+.mvp .rules h3 { font-size: 17px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--lime); }

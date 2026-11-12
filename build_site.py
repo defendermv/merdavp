@@ -19,13 +19,21 @@ HEAD = """<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MerdaVP</title>
 <meta name="description" content="Ranking do pior da semana do grupo no League of Legends.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233a2616'/%3E%3Ctext x='16' y='23' font-family='Arial' font-weight='700' font-size='19' text-anchor='middle' fill='%23e9b949'%3EM%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="img/icone.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<meta name="theme-color" content="#0f161b">
+<meta property="og:title" content="MerdaVP">
+<meta property="og:description" content="Ranking do pior da semana do grupo no League of Legends.">
+<meta property="og:image" content="https://defendermv.github.io/merdavp/img/og.png">
+<meta property="og:url" content="https://defendermv.github.io/merdavp/">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700;800;900&family=Lilita+One&family=Poppins:wght@400;500;600&display=swap">
 <style>
-:root { --font-anthropic-sans: "Inter", "Segoe UI", system-ui, sans-serif; color-scheme: dark; }
-html, body { margin: 0; height: 100%; background: #111725; }
+:root { --font-anthropic-sans: "Poppins", "Segoe UI", system-ui, sans-serif; color-scheme: dark; }
+html, body { margin: 0; height: 100%; background: #0b1117; }
 body { font: 14px/1.45 var(--font-anthropic-sans); -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; }
 [hidden] { display: none !important; }
@@ -48,6 +56,12 @@ def main():
     DOCS.mkdir(exist_ok=True)
     (DOCS / "index.html").write_text(HEAD + page + TAIL, encoding="utf-8")
     shutil.copy(HERE / "site" / "runtime.js", DOCS / "runtime.js")
+    (DOCS / "img").mkdir(exist_ok=True)
+    fontes = {f.name for f in (HERE / "site" / "img").iterdir()}
+    for f in (DOCS / "img").iterdir():
+        if f.name not in fontes:
+            f.unlink()  # remove imagens que saíram do site
+    shutil.copytree(HERE / "site" / "img", DOCS / "img", dirs_exist_ok=True)
     (DOCS / ".nojekyll").write_text("", encoding="utf-8")
     (DOCS / "data").mkdir(exist_ok=True)
     for f in FILES:

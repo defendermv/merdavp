@@ -5,13 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MerdaVP</title>
 <meta name="description" content="Ranking do pior da semana do grupo no League of Legends.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233a2616'/%3E%3Ctext x='16' y='23' font-family='Arial' font-weight='700' font-size='19' text-anchor='middle' fill='%23e9b949'%3EM%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="img/icone.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<meta name="theme-color" content="#0f161b">
+<meta property="og:title" content="MerdaVP">
+<meta property="og:description" content="Ranking do pior da semana do grupo no League of Legends.">
+<meta property="og:image" content="https://defendermv.github.io/merdavp/img/og.png">
+<meta property="og:url" content="https://defendermv.github.io/merdavp/">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700;800;900&family=Lilita+One&family=Poppins:wght@400;500;600&display=swap">
 <style>
-:root { --font-anthropic-sans: "Inter", "Segoe UI", system-ui, sans-serif; color-scheme: dark; }
-html, body { margin: 0; height: 100%; background: #111725; }
+:root { --font-anthropic-sans: "Poppins", "Segoe UI", system-ui, sans-serif; color-scheme: dark; }
+html, body { margin: 0; height: 100%; background: #0b1117; }
 body { font: 14px/1.45 var(--font-anthropic-sans); -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; }
 [hidden] { display: none !important; }
@@ -394,18 +402,157 @@ img { max-width: 100%; }
 .mvp .why-t b { display: block; font-size: 14px; }
 .mvp .why-t small { display: block; font-size: 11px; color: var(--muted); }
 .mvp .why ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; font-size: 13px; color: #c4cede; line-height: 1.4; }
+.mvp .brand-img { display: block; width: 100%; max-width: 196px; height: auto; }
+@media (max-width: 820px) { .mvp .brand-img { width: auto; height: 34px; max-width: none; } }
 @keyframes mvp-pop { from { transform: translateY(6px); opacity: .2; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .mvp .chev { transition: none; } }
+/* ===================== TEMA GAMER (inspirado em sites de eSports) =====================
+   Grafite quase preto, verde-limão do logo como destaque, amarelo secundário,
+   quinas cortadas, títulos em Barlow caixa alta, display em Lilita One com sombra neon. */
+.mvp {
+  --bg: #0b1117; --panel: #141c25; --panel2: #1b2531; --line: #243140; --line2: #2f3e50;
+  --fg: #eef3f8; --muted: #9aa3b2; --dim: #66717f;
+  --lime: #85fd05; --lime-d: #4f9c00; --gold: #ffbe18; --green: #85fd05;
+  --sans: "Poppins", "Segoe UI", system-ui, sans-serif;
+  --display: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --hero: "Lilita One", "Barlow", sans-serif;
+  --cut: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  --cut-s: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  --trap: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
+  font-family: var(--sans);
+  background: var(--bg);
+}
+
+/* ---------- títulos ---------- */
+.mvp h1, .mvp h2, .mvp h3 { font-family: var(--display); }
+.mvp .sec-title { align-items: flex-end; margin-bottom: 14px; }
+.mvp .sec-title h2 { font-size: 22px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; position: relative; padding-bottom: 10px; }
+.mvp .sec-title h2::after { content: ""; position: absolute; left: 0; bottom: 0; width: 46px; height: 4px; background: var(--lime); transform: skewX(-30deg); transform-origin: left; }
+.mvp .eyebrow, .mvp .tag, .mvp .t, .mvp .why-h, .mvp .aw-label, .mvp .tile .lab, .mvp .team-h, .mvp .side-foot .lab, .mvp .dmgchart .h { font-family: var(--display); letter-spacing: .12em; }
+
+/* ---------- menu lateral ---------- */
+.mvp .side { background: #080d12; border-right: 1px solid #16202b; }
+.mvp .nav button { font-family: var(--display); font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: .04em; border-radius: 0; }
+.mvp .nav button svg { color: var(--dim); }
+.mvp .nav button:hover { background: rgba(133,253,5,.05); color: var(--fg); }
+.mvp .nav button[aria-selected="true"] { background: linear-gradient(90deg, rgba(133,253,5,.16), rgba(133,253,5,0) 85%); color: var(--fg); }
+.mvp .nav button[aria-selected="true"]::before { background: var(--lime); box-shadow: 0 0 12px var(--lime); }
+.mvp .nav button[aria-selected="true"] svg { color: var(--lime); }
+.mvp .side-foot { border-top-color: #16202b; }
+.mvp .side-foot .v { color: var(--lime); font-family: var(--display); font-size: 16px; }
+
+/* ---------- topo (hero) ---------- */
+.mvp .top.hero-g { position: relative; border-bottom: 0; overflow: hidden; isolation: isolate;
+  background:
+    linear-gradient(90deg, rgba(11,17,23,.97) 0%, rgba(11,17,23,.86) 42%, rgba(11,17,23,.35) 100%),
+    radial-gradient(60% 120% at 85% 40%, rgba(133,253,5,.22), transparent 70%),
+    var(--hero-img, url("img/hero-agora.jpg")) right 30% / cover no-repeat, #0b1117; }
+.mvp .top.hero-g::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: var(--lime);
+  clip-path: polygon(0 100%, 0 0, 38% 0, 40% 100%, 60% 100%, 62% 0, 100% 0, 100% 100%); opacity: .9; }
+.mvp .hero-in { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-end; justify-content: space-between; padding-block: 44px 38px; }
+.mvp .hero-txt { min-width: 0; display: grid; gap: 10px; }
+.mvp .tag-live { justify-self: start; font-family: var(--display); font-weight: 800; font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--lime); background: rgba(133,253,5,.12); padding: 6px 14px; clip-path: var(--cut-s); }
+.mvp .hero-title { margin: 0; font-family: var(--hero); font-weight: 400; font-size: clamp(38px, 6.4vw, 78px); line-height: .95; text-transform: uppercase; color: #fff;
+  text-shadow: -1px 5px 0 rgba(133,253,5,.7); letter-spacing: .5px; text-wrap: balance; }
+.mvp .top .lede { font-size: 15px; color: #c9d1db; max-width: 60ch; }
+.mvp .top .lede b { color: var(--lime); }
+.mvp .weekpick label { font-family: var(--display); font-weight: 700; color: var(--muted); }
+.mvp .dash-select { background-color: rgba(8,13,18,.8); border: 1px solid var(--line2); border-radius: 0; clip-path: var(--cut-s); font-family: var(--display); font-weight: 700; font-size: 15px; }
+
+/* ---------- cartões com quina cortada ---------- */
+.mvp .card, .mvp details.match, .mvp .sc, .mvp .why, .mvp .tile { border: 0; border-radius: 0; clip-path: var(--cut); }
+.mvp .card, .mvp details.match { background: var(--panel); }
+.mvp .tile { clip-path: var(--cut-s); background: var(--panel2); }
+.mvp .sc { background: var(--panel2); box-shadow: inset 0 0 0 1px var(--line); }
+.mvp .why { background: #0f161e; }
+.mvp .latest-h { border-bottom-color: var(--line); background: linear-gradient(90deg, rgba(133,253,5,.06), transparent 60%); }
+.mvp .latest-h .big { font-family: var(--hero); font-weight: 400; font-size: 30px; text-transform: uppercase; letter-spacing: .5px; }
+.mvp .latest-h .big.win { color: var(--lime); }
+
+/* destaque: pior e MVP */
+.mvp .spot.worst { background: linear-gradient(115deg, rgba(232,89,79,.28), var(--panel) 62%); box-shadow: none; }
+.mvp .spot.best { background: linear-gradient(115deg, rgba(133,253,5,.18), var(--panel) 62%); }
+.mvp .spot .tag { font-weight: 800; }
+.mvp .spot .who { font-family: var(--hero); font-weight: 400; font-size: 32px; text-transform: uppercase; letter-spacing: .5px; }
+.mvp .spot.best .who { font-size: 24px; }
+.mvp .spot .big { font-family: var(--hero); font-weight: 400; }
+.mvp .spot.best .big, .mvp .spot.best .tag { color: var(--lime); }
+.mvp .portrait { border-radius: 0; clip-path: var(--cut-s); border: 0; }
+.mvp .spot.worst .portrait { box-shadow: none; outline: 0; }
+
+/* awards */
+.mvp .aw.good .t { color: var(--lime); }
+.mvp .aw-label.good { color: var(--lime); }
+.mvp .aw img, .mvp .aw .ph { border-radius: 0; clip-path: var(--cut-s); }
+
+/* ---------- tabelas ---------- */
+.mvp table.rank th { font-family: var(--display); font-weight: 800; font-size: 12px; letter-spacing: .1em; color: var(--muted); background: #10171f; }
+.mvp table.rank td { border-bottom-color: #1d2733; }
+.mvp table.rank tbody tr:hover td { background: rgba(133,253,5,.04); }
+.mvp table.rank tr.first td { background: rgba(232,89,79,.12); }
+.mvp .pl img, .mvp .pl .ph { border-radius: 0; clip-path: var(--cut-s); }
+.mvp .pl b { font-family: var(--display); font-weight: 700; font-size: 15px; }
+.mvp .ppp b { font-family: var(--display); font-size: 16px; }
+.mvp .rk { font-family: var(--display); font-weight: 800; }
+
+/* ---------- partidas ---------- */
+.mvp .match.win .stripe { background: var(--lime); }
+.mvp .match.win .res b { color: var(--lime); }
+.mvp .res b { font-family: var(--display); font-weight: 800; font-size: 16px; text-transform: uppercase; letter-spacing: .06em; }
+.mvp .score { font-family: var(--display); font-size: 20px; }
+.mvp .score .us { color: var(--lime); }
+.mvp .face img, .mvp .face .ph, .mvp .prow .ico img, .mvp .prow .ico .ph { border-radius: 0; clip-path: var(--cut-s); }
+.mvp .face2.us .face img, .mvp .face2.us .face .ph { box-shadow: none; outline: 2px solid var(--lime); outline-offset: 1px; clip-path: none; }
+.mvp .prow.us { background: linear-gradient(90deg, rgba(133,253,5,.08), transparent 70%); }
+.mvp .team.azul .team-h .nm { color: #4fb3ff; }
+.mvp .k { color: var(--lime); }
+.mvp .board-foot a { color: var(--lime); }
+
+/* ---------- botões, abas e seletores ---------- */
+.mvp .btn, .mvp .pick, .mvp .seg button, .mvp .legend button { border-radius: 0; font-family: var(--display); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+.mvp .btn { clip-path: var(--trap); border: 0; background: var(--panel2); padding: 10px 22px; }
+.mvp .btn:hover { background: var(--line2); }
+.mvp .btn.primary { background: var(--lime); color: #0b1117; font-weight: 800; font-size: 15px; padding: 12px 30px; }
+.mvp .btn.primary:hover { background: #a6ff3a; }
+.mvp .pick { clip-path: var(--cut-s); border: 0; background: var(--panel2); padding: 8px 14px; }
+.mvp .pick[aria-pressed="true"] { background: var(--lime); color: #0b1117; }
+.mvp .seg { border: 0; border-radius: 0; gap: 4px; background: transparent; }
+.mvp .seg button { clip-path: var(--cut-s); background: var(--panel2); }
+.mvp .seg button[aria-pressed="true"] { background: var(--lime); color: #0b1117; }
+.mvp input.txt { border-radius: 0; clip-path: var(--cut-s); border: 0; background: var(--panel2); }
+.mvp .tcard.azul { border-top: 0; box-shadow: inset 0 4px 0 #4fb3ff; }
+.mvp .tcard.vermelho { border-top: 0; box-shadow: inset 0 4px 0 var(--red); }
+.mvp .tcard h3 { font-family: var(--hero); font-weight: 400; font-size: 22px; letter-spacing: .5px; }
+.mvp .tcard.azul h3 { color: #4fb3ff; }
+.mvp .tcard .m { font-family: var(--display); font-size: 18px; }
+
+/* ---------- medalhas de título ---------- */
+.mvp .bdg { border-radius: 0; clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 12px); font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: .02em; padding-left: 4px; }
+.mvp .bdg .ic { border-radius: 0; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); width: 26px; height: 26px; }
+.mvp .bdg.bom { border-color: #8a6a14; color: #ffd76a; background: #18150c; }
+.mvp .bdg.bom .ic { background: #3a2f0e; }
+.mvp .bdg.pos { padding-left: 11px; }
+
+/* ---------- vazio e regras ---------- */
+.mvp .empty { border-radius: 0; clip-path: var(--cut); border: 0; background: var(--panel); }
+.mvp .rules h3 { font-size: 17px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--lime); }
+.mvp .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.mvp .hero-txt .weekpick { justify-self: start; margin-top: 4px; }
+.mvp .top .lede { font-family: var(--display); font-weight: 700; text-transform: uppercase; letter-spacing: .12em; font-size: 13px; color: var(--lime); }
+.mvp .brand-ico { display: none; }
+@media (max-width: 820px) { .mvp .brand-full { display: none; } .mvp .brand-ico { display: block; width: 34px; height: 34px; } }
+.mvp .hero-txt .reservado { visibility: hidden; }
 </style>
 
 <div class="mvp" lang="pt-BR" data-read>
   <div class="layout">
     <aside class="side">
-      <div class="brand"><span class="logo" aria-hidden="true">M</span><span>Merda<span class="ink">VP</span></span></div>
+      <div class="brand"><img class="brand-img brand-full" src="img/logo.svg" alt="MerdaVP" width="196" height="41"><img class="brand-img brand-ico" src="img/icone.svg" alt="MerdaVP" width="34" height="34"></div>
       <nav class="nav" role="tablist" aria-label="Seções" aria-orientation="vertical">
           <button type="button" role="tab" id="tab-agora" data-tab="agora" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><span>Última partida</span></button>
           <button type="button" role="tab" id="tab-flex" data-tab="flex" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg><span>Flex · MerdaVP</span></button>
-          <button type="button" role="tab" id="tab-custom" data-tab="custom" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l9 9M4 4h4M4 4v4M20 4l-9 9M20 4h-4M20 4v4M7 15l-3 3 2 2 3-3M17 15l3 3-2 2-3-3"/></svg><span>Personalizadas</span></button>
+          <button type="button" role="tab" id="tab-custom" data-tab="custom" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l9 9M4 4h4M4 4v4M20 4l-9 9M20 4h-4M20 4v4M7 15l-3 3 2 2 3-3M17 15l3 3-2 2-3-3"/></svg><span>ARAM · MerdaVP</span></button>
           <button type="button" role="tab" id="tab-jogadores" data-tab="jogadores" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span>Jogadores</span></button>
           <button type="button" role="tab" id="tab-estatisticas" data-tab="estatisticas" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/></svg><span>Estatísticas</span></button>
           <button type="button" role="tab" id="tab-galeria" data-tab="galeria" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a8 8 0 0 0-8 8c0 3 1.5 4.5 3 5.5V20h10v-3.5c1.5-1 3-2.5 3-5.5a8 8 0 0 0-8-8z"/><circle cx="9" cy="11" r="1.6" class="f"/><circle cx="15" cy="11" r="1.6" class="f"/><path d="M10 20v-2M14 20v-2"/></svg><span>Galeria da vergonha</span></button>
@@ -419,15 +566,16 @@ img { max-width: 100%; }
       </div>
     </aside>
     <main class="main">
-      <header class="top">
-        <div class="wrap top-row">
-          <div>
-            <div class="eyebrow">Ranking do grupo · semana de segunda a domingo</div>
+      <header class="top hero-g">
+        <div class="wrap hero-in">
+          <div class="hero-txt">
+            <span class="tag-live">Ranking do grupo · segunda a domingo</span>
+            <h1 class="hero-title" id="hero-title">Última partida</h1>
             <p class="lede" data-draw="lede">—</p>
-          </div>
-          <div class="weekpick">
-            <label for="semana">Semana</label>
-            <select class="dash-select" id="semana" data-draw="semanas" data-source="ranking" aria-label="Semana"></select>
+            <div class="weekpick">
+              <label for="semana" class="sr-only">Semana</label>
+              <select class="dash-select" id="semana" data-draw="semanas" data-source="ranking" aria-label="Semana"></select>
+            </div>
           </div>
         </div>
       </header>
@@ -937,6 +1085,14 @@ function abrirAba(nome) {
   document.querySelectorAll('.mvp [data-tab]').forEach((b) => b.setAttribute('aria-selected', b.dataset.tab === nome ? 'true' : 'false'));
   document.querySelectorAll('.mvp [data-panel]').forEach((p) => { p.hidden = p.dataset.panel !== nome; });
   (PANEL_DRAWS[nome] || []).forEach((n) => dash.draw(n));
+  const ht = document.getElementById('hero-title');
+  const lb = document.querySelector(`.mvp [data-tab="${nome}"] span`);
+  if (ht && lb) ht.textContent = lb.textContent;
+  const hero = document.querySelector('.mvp .hero-g');
+  if (hero) hero.style.setProperty('--hero-img', `url("img/hero-${nome}.jpg")`);
+  // abas com dados de todos os períodos não mostram etiqueta, semana nem seletor
+  const semanal = ['agora', 'flex', 'custom'].includes(nome);
+  document.querySelectorAll('.mvp .hero-txt .tag-live, .mvp .hero-txt .lede, .mvp .hero-txt .weekpick').forEach((e) => { e.classList.toggle('reservado', !semanal); e.setAttribute('aria-hidden', semanal ? 'false' : 'true'); });
 }
 document.querySelectorAll('.mvp [data-tab]').forEach((b) => b.addEventListener('click', () => { abrirAba(b.dataset.tab); dash.setLink(b.dataset.tab); }));
 {
@@ -954,16 +1110,9 @@ dash.draw('semanas', (sel) => {
 });
 
 dash.draw('lede', (p) => {
-  const s = rankingDaSemana('ranking');
-  if (!s || !s.rows.length) { p.textContent = s ? 'Nenhuma flex válida nesta semana.' : '—'; return; }
-  const w = s.rows[0];
-  const aberta = fimSemana(s.w) >= hojeBRT();
-  const b = el('b', null, w.jogador);
-  b.dataset.source = 'ranking'; b.dataset.field = 'jogador'; b.dataset.where = `semana=${enc(w.semana)}&jogador=${enc(w.jogador)}`;
-  const n = el('b', null, fmt2(w.nota));
-  n.dataset.source = 'ranking'; n.dataset.field = 'nota'; n.dataset.where = `semana=${enc(w.semana)}&jogador=${enc(w.jogador)}`;
-  p.replaceChildren(aberta ? 'Semana em andamento. Por enquanto, ' : `MerdaVP da semana de ${dia(s.w)} a ${dia(fimSemana(s.w))}: `, b,
-    aberta ? ' é o pior da flex, com ' : ', com ', n, ' pontos por partida.');
+  const w = semanaAtual();
+  if (!w) { p.textContent = '—'; return; }
+  p.textContent = fimSemana(w) >= hojeBRT() ? 'Semana em andamento' : 'Semana encerrada';
 });
 
 /* ---------- cartões pior / melhor ---------- */
