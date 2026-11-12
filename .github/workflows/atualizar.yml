@@ -1,0 +1,74 @@
+name: Atualizar MerdaVP
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # a cada 10 min (o GitHub pode atrasar alguns minutos)
+  workflow_dispatch:          # botão "Run workflow" para atualizar na hora
+  push:
+    branches: [main]
+    paths:
+      - "matches/custom/**"   # o coletor do PC mandou personalizadas novas
+      - "page/**"
+      - "site/**"
+      - "*.py"
+      - "players.json"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: atualizar
+  cancel-in-progress: false
+
+jobs:
+  dados:
+    runs-on: ubuntu-latest
+    outputs:
+      mudou: ${{ steps.salvar.outputs.mudou }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pillow
+      - name: Buscar flex novas e montar o site
+        env:
+          RIOT_API_KEY: ${{ secrets.RIOT_API_KEY }}
+        run: |
+          python fetch_flex.py
+          python build_data.py
+          python build_site.py
+      - name: Salvar o que mudou
+        id: salvar
+        run: |
+          git config user.name "merdavp-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A matches out docs puuids.json cache
+          if git diff --cached --quiet; then
+            echo "mudou=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "Atualiza partidas"
+            git pull --rebase
+            git push
+            echo "mudou=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  publicar:
+    needs: dados
+    if: needs.dados.outputs.mudou == 'true' || github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deploy
+        uses: actions/deploy-pages@v4

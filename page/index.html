@@ -1,0 +1,1988 @@
+<meta name="dash-one-writer">
+<style>
+/* Layout: faixa de topo com título, semana e abas; cada aba = cartões do pior/melhor, ranking e placares das partidas.
+   Visual único escuro (azul-noite), inspirado em placar de partida: time azul x vermelho, KDA colorido. */
+#dash-root { --dash-gutter: 0; }
+.mvp {
+  --bg: #111725; --panel: #182133; --panel2: #1f2a3f; --line: #2a3650; --line2: #34425f;
+  --fg: #e1e8f3; --muted: #8b9ab2; --dim: #5f6e88;
+  --blue: #3ea2e6; --red: #e8594f; --green: #3ccf8e; --gold: #e9b949; --orange: #f08c3e;
+  --sans: var(--font-anthropic-sans), "Segoe UI", system-ui, sans-serif;
+  --display: var(--font-anthropic-sans), "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+  background: var(--bg); color: var(--fg); font-family: var(--sans);
+  padding-block: 0 40px;
+  min-height: 100%;
+}
+.mvp * { box-sizing: border-box; }
+.mvp .wrap { max-width: 1100px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.mvp p { margin: 0; }
+.mvp h1, .mvp h2, .mvp h3 { margin: 0; text-wrap: balance; }
+.mvp .muted { color: var(--muted); font-size: 13px; }
+.mvp .num { font-variant-numeric: tabular-nums; }
+.mvp [data-dash-source-state=refreshing] { opacity: .5; }
+
+/* topo */
+.mvp .hero { background: linear-gradient(180deg, #1a2742 0%, var(--bg) 100%); border-bottom: 1px solid var(--line); }
+.mvp .hero .wrap { display: grid; gap: 18px; padding-top: 28px; }
+.mvp .hero-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: end; justify-content: space-between; }
+.mvp .hero-row > div { min-width: 0; }
+.mvp .eyebrow { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--blue); font-weight: 600; }
+.mvp h1 { font-family: var(--display); font-size: clamp(30px, 5vw, 42px); font-weight: 600; letter-spacing: -.01em; margin-top: 4px; }
+.mvp h1 .ink { color: var(--gold); }
+.mvp .lede { color: var(--muted); font-size: 15px; margin-top: 6px; max-width: 62ch; }
+.mvp .lede b { color: var(--fg); font-weight: 600; }
+.mvp .weekpick { display: grid; gap: 4px; }
+.mvp .weekpick label { font-size: 11px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.mvp .dash-select { background-color: var(--panel2); color: var(--fg); border: 1px solid var(--line2); border-radius: 6px; min-width: 170px; }
+.mvp .tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.mvp .tabs button { appearance: none; background: none; border: 0; color: var(--muted); font: 600 14px var(--sans); padding: 12px 14px 14px; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+.mvp .tabs button:hover { color: var(--fg); }
+.mvp .tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--blue); }
+.mvp .tabs button:focus-visible, .mvp summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+.mvp .panel-tab { display: grid; gap: 22px; padding-top: 22px; }
+.mvp .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+.mvp .sec-title { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.mvp .sec-title h2 { font-size: 16px; font-weight: 600; }
+
+/* pior x melhor */
+.mvp .duo { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; }
+@media (max-width: 720px) { .mvp .duo { grid-template-columns: 1fr; } }
+.mvp .spot { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; padding: 18px; position: relative; overflow: hidden; }
+.mvp .spot.worst { background: linear-gradient(110deg, rgba(232,89,79,.18), var(--panel) 60%); border-color: rgba(232,89,79,.45); }
+.mvp .spot.best { background: linear-gradient(110deg, rgba(60,207,142,.12), var(--panel) 60%); }
+.mvp .spot .tag { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; }
+.mvp .spot.worst .tag { color: var(--red); }
+.mvp .spot.best .tag { color: var(--green); }
+.mvp .spot .who { font-size: 26px; font-weight: 600; line-height: 1.15; margin-top: 2px; overflow-wrap: anywhere; }
+.mvp .spot.best .who { font-size: 20px; }
+.mvp .spot .facts { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; color: var(--muted); font-size: 13px; }
+.mvp .spot .facts b { color: var(--fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+.mvp .spot .big { font-size: 34px; font-weight: 700; color: var(--red); font-variant-numeric: tabular-nums; line-height: 1; }
+.mvp .spot.best .big { font-size: 24px; color: var(--green); }
+.mvp .portrait { width: 76px; height: 76px; border-radius: 8px; border: 2px solid var(--line2); background: var(--panel2); display: block; object-fit: cover; }
+.mvp .spot.worst .portrait { border-color: var(--red); }
+.mvp .spot.best .portrait { width: 56px; height: 56px; border-color: var(--green); }
+
+/* ranking */
+.mvp .tablewrap { overflow-x: auto; }
+.mvp table.rank { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 14px; }
+.mvp table.rank th { text-align: center; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 10px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.mvp table.rank td { text-align: center; padding: 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.mvp table.rank tr:last-child td { border-bottom: 0; }
+.mvp table.rank .l { text-align: left; }
+.mvp table.rank .r { text-align: right; }
+.mvp table.rank tr.first td { background: rgba(232,89,79,.09); }
+.mvp table.rank tr.first td:first-child { box-shadow: inset 3px 0 0 var(--red); }
+.mvp .pl { display: flex; align-items: center; gap: 10px; }
+.mvp .pl img, .mvp .pl .ph { width: 32px; height: 32px; border-radius: 6px; flex: none; background: var(--panel2); }
+.mvp .pl b { font-weight: 600; }
+.mvp .pl small { display: block; color: var(--dim); font-size: 11px; }
+.mvp .cnt { display: inline-block; min-width: 26px; padding: 2px 6px; border-radius: 4px; font-weight: 600; color: var(--dim); }
+.mvp .cnt.c10 { background: rgba(232,89,79,.2); color: #ff8a80; }
+.mvp .cnt.c9 { background: rgba(240,140,62,.18); color: #ffb072; }
+.mvp .cnt.c8 { background: rgba(233,185,73,.16); color: var(--gold); }
+.mvp .cnt.mvp1 { background: rgba(60,207,142,.15); color: var(--green); }
+.mvp .ppp { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+.mvp .ppp i { display: block; height: 6px; border-radius: 3px; background: var(--red); }
+.mvp .ppp b { min-width: 2.8em; text-align: right; font-weight: 700; }
+.mvp .rk { color: var(--muted); font-weight: 600; }
+
+/* partidas */
+.mvp .matches { display: grid; gap: 8px; }
+.mvp details.match { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.mvp details.match > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 4px auto 1fr auto; gap: 14px; align-items: center; padding: 10px 14px 10px 0; }
+.mvp .teams-sum { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; min-width: 0; }
+.mvp .tsum { display: flex; gap: 4px; }
+.mvp .face2 { display: grid; justify-items: center; gap: 4px; width: 52px; }
+.mvp .face2 .fn { font-size: 10px; line-height: 1.2; color: var(--muted); max-width: 52px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mvp .face2.us .fn { color: var(--fg); font-weight: 700; }
+.mvp .face2.us .face img, .mvp .face2.us .face .ph { box-shadow: 0 0 0 2px var(--blue); }
+.mvp .tsum.deles .face2 .face img { filter: saturate(.85); }
+.mvp details.match > summary::-webkit-details-marker { display: none; }
+.mvp .stripe { align-self: stretch; }
+.mvp .match.win .stripe { background: var(--blue); }
+.mvp .match.loss .stripe { background: var(--red); }
+.mvp .res { display: grid; gap: 2px; min-width: 92px; }
+.mvp .res b { font-size: 14px; font-weight: 700; }
+.mvp .match.win .res b { color: var(--blue); }
+.mvp .match.loss .res b { color: var(--red); }
+.mvp .res span { font-size: 12px; color: var(--muted); }
+.mvp .faces { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.mvp .face { position: relative; width: 36px; height: 36px; }
+.mvp .face img, .mvp .face .ph { width: 36px; height: 36px; border-radius: 6px; display: block; background: var(--panel2); }
+.mvp .face .badge { position: absolute; right: -5px; bottom: -5px; font-size: 10px; font-weight: 700; padding: 1px 4px; border-radius: 4px; background: var(--panel2); border: 1px solid var(--line2); color: var(--fg); font-variant-numeric: tabular-nums; }
+.mvp .badge.b8 { background: #5a4415; border-color: var(--gold); color: #ffe08a; }
+.mvp .badge.b9 { background: #5c2f12; border-color: var(--orange); color: #ffc08f; }
+.mvp .badge.b10 { background: #5b1a17; border-color: var(--red); color: #ffb0a8; }
+.mvp .badge.b1 { background: #12432f; border-color: var(--green); color: #9ff0c9; }
+.mvp .score { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px; white-space: nowrap; }
+.mvp .score .us { color: var(--blue); } .mvp .score .them { color: var(--red); } .mvp .score .x { color: var(--dim); margin: 0 6px; font-weight: 400; }
+.mvp .chev { color: var(--dim); transition: transform .15s; }
+.mvp details[open] .chev { transform: rotate(180deg); }
+@media (max-width: 600px) {
+  .mvp details.match > summary { grid-template-columns: 4px 1fr auto; row-gap: 8px; }
+  .mvp details.match > summary .teams-sum { grid-column: 2 / 4; grid-row: 2; }
+  .mvp .face2 { width: 44px; } .mvp .face2 .fn { max-width: 44px; }
+  .mvp .tsum { gap: 2px; }
+  .mvp details.match > summary .chev { display: none; }
+}
+
+/* placar completo */
+.mvp .board { border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 1fr; }
+@media (max-width: 860px) { .mvp .board { grid-template-columns: 1fr; } }
+.mvp .team { padding: 10px 14px 12px; min-width: 0; }
+.mvp .team + .team { border-left: 1px solid var(--line); }
+@media (max-width: 860px) { .mvp .team + .team { border-left: 0; border-top: 1px solid var(--line); } }
+.mvp .team-h { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.mvp .team.azul .team-h .nm { color: var(--blue); }
+.mvp .team.vermelho .team-h .nm { color: var(--red); }
+.mvp .team-h .rs { color: var(--muted); letter-spacing: .04em; }
+.mvp .prow { display: grid; grid-template-columns: 40px minmax(0, 1fr) 118px 38px; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid rgba(42,54,80,.6); }
+.mvp .prow:first-of-type { border-top: 0; }
+.mvp .prow.us { background: linear-gradient(90deg, rgba(62,162,230,.10), transparent 70%); }
+.mvp .prow .ico { position: relative; width: 40px; height: 40px; }
+.mvp .prow .ico img, .mvp .prow .ico .ph { width: 40px; height: 40px; border-radius: 6px; display: block; background: var(--panel2); }
+.mvp .prow .lvl { position: absolute; left: -4px; bottom: -4px; font-size: 10px; font-weight: 700; background: #0b0f18; color: var(--muted); border-radius: 4px; padding: 0 3px; font-variant-numeric: tabular-nums; }
+.mvp .prow .nm { min-width: 0; }
+.mvp .prow .nm b { display: block; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mvp .prow.us .nm b { color: #fff; }
+.mvp .prow .nm small { display: block; font-size: 11px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mvp .prow .dmg { height: 4px; border-radius: 2px; background: var(--line); margin-top: 5px; overflow: hidden; }
+.mvp .prow .dmg i { display: block; height: 100%; }
+.mvp .team.azul .dmg i { background: var(--blue); }
+.mvp .team.vermelho .dmg i { background: var(--red); }
+.mvp .prow .kda { text-align: center; font-variant-numeric: tabular-nums; }
+.mvp .prow .kda .k3 { font-weight: 700; font-size: 13px; }
+.mvp .k { color: var(--green); } .mvp .d { color: var(--red); } .mvp .a { color: var(--blue); } .mvp .sl { color: var(--dim); margin: 0 3px; font-weight: 400; }
+.mvp .prow .kda small { display: block; font-size: 11px; color: var(--muted); white-space: nowrap; }
+.mvp .pos { justify-self: end; font-size: 12px; font-weight: 700; padding: 3px 0; width: 38px; text-align: center; border-radius: 4px; background: var(--panel2); color: var(--muted); font-variant-numeric: tabular-nums; }
+.mvp .pos.b8 { background: rgba(233,185,73,.18); color: var(--gold); }
+.mvp .pos.b9 { background: rgba(240,140,62,.2); color: #ffb072; }
+.mvp .pos.b10 { background: rgba(232,89,79,.25); color: #ff8a80; }
+.mvp .pos.b1 { background: rgba(60,207,142,.18); color: var(--green); }
+.mvp .board-foot { grid-column: 1 / -1; border-top: 1px solid var(--line); padding: 8px 14px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.mvp .board-foot a { color: var(--blue); text-decoration: none; }
+.mvp .board-foot a:hover { text-decoration: underline; }
+
+/* galeria */
+.mvp .hall { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.mvp .wk { padding: 14px; display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; }
+.mvp .wk.open { border-style: dashed; }
+.mvp .wk img, .mvp .wk .ph { width: 48px; height: 48px; border-radius: 6px; background: var(--panel2); }
+.mvp .wk .when { font-size: 11px; color: var(--muted); letter-spacing: .04em; }
+.mvp .wk .n { font-size: 17px; font-weight: 600; overflow-wrap: anywhere; }
+.mvp .wk .v { font-size: 12px; color: var(--muted); }
+.mvp .wk .v b { color: var(--red); }
+.mvp .tally { display: flex; flex-wrap: wrap; gap: 8px; }
+.mvp .tl { display: inline-flex; gap: 8px; align-items: center; padding: 6px 10px; border-radius: 6px; background: var(--panel); border: 1px solid var(--line); font-size: 13px; }
+.mvp .tl .pips { display: inline-flex; gap: 3px; }
+.mvp .tl .pips i { width: 8px; height: 8px; border-radius: 2px; background: var(--line2); }
+.mvp .tl .pips i.on { background: var(--red); }
+
+.mvp .empty { padding: 18px; color: var(--muted); border: 1px dashed var(--line2); border-radius: 8px; }
+.mvp .rules { padding: 18px 20px; display: grid; gap: 14px; max-width: 760px; }
+.mvp .rules ol { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; color: #c4cede; line-height: 1.5; }
+.mvp .rules h3 { font-size: 14px; font-weight: 600; }
+.mvp .rules p { color: var(--muted); line-height: 1.55; font-size: 14px; }
+/* prêmios */
+.mvp .awards-wrap { display: grid; gap: 8px; }
+.mvp .aw-label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; margin-top: 4px; }
+.mvp .aw-label.bad { color: var(--red); } .mvp .aw-label.good { color: var(--green); }
+.mvp .awards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.mvp .bdg.award { box-shadow: 0 0 0 1px rgba(233,185,73,.25), 0 0 10px rgba(233,185,73,.12); }
+.mvp .bdg.award.ruim { box-shadow: 0 0 0 1px rgba(232,89,79,.25), 0 0 10px rgba(232,89,79,.12); }
+@media (max-width: 1100px) { .mvp .awards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .mvp .awards { grid-template-columns: 1fr; } }
+.mvp .aw { padding: 14px; display: grid; grid-template-columns: 48px 1fr; gap: 12px; align-items: center; min-width: 0; }
+.mvp .aw img, .mvp .aw .ph { width: 48px; height: 48px; border-radius: 8px; background: var(--panel2); }
+.mvp .aw .t { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+.mvp .aw.good .t { color: var(--green); } .mvp .aw.bad .t { color: var(--red); } .mvp .aw.neutral .t { color: var(--gold); }
+.mvp .aw .w { font-size: 16px; font-weight: 600; overflow-wrap: anywhere; line-height: 1.25; margin-top: 2px; }
+.mvp .aw .v { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; line-height: 1.4; margin-top: 2px; }
+.mvp .aw .j { font-size: 11px; color: var(--dim); margin-top: 2px; }
+.mvp .aw .v b { color: var(--fg); font-weight: 600; }
+
+/* gráficos */
+.mvp .chart { position: relative; padding: 14px 14px 8px; }
+.mvp .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.mvp .chart .axis text { fill: var(--muted); font-size: 11px; font-family: var(--sans); }
+.mvp .chart .axis path, .mvp .chart .axis line { stroke: var(--line2); }
+.mvp .chart .grid line { stroke: var(--line); }
+.mvp .chart .grid path { display: none; }
+.mvp .legend { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 12px; }
+.mvp .legend button { appearance: none; display: inline-flex; gap: 6px; align-items: center; background: var(--panel2); border: 1px solid var(--line); color: var(--fg); border-radius: 999px; padding: 3px 10px; font: 12px var(--sans); cursor: pointer; }
+.mvp .legend button i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+.mvp .legend button[aria-pressed="false"] { opacity: .45; }
+.mvp .tip { position: absolute; pointer-events: none; background: #0b101b; border: 1px solid var(--line2); border-radius: 6px; padding: 6px 9px; font-size: 12px; color: var(--fg); box-shadow: 0 6px 18px rgba(0,0,0,.4); white-space: nowrap; z-index: 2; }
+.mvp .tip b { font-weight: 700; }
+.mvp .dmgchart { grid-column: 1 / -1; border-top: 1px solid var(--line); padding: 12px 14px 10px; }
+.mvp .dmgchart .h { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--muted); margin-bottom: 8px; }
+.mvp .bars { display: flex; align-items: flex-end; gap: 6px; height: 150px; }
+.mvp .bars .col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+.mvp .bars .col span { font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.mvp .bars .col .b { width: 100%; max-width: 34px; border-radius: 3px 3px 0 0; }
+.mvp .bars .col.azul .b { background: var(--blue); } .mvp .bars .col.vermelho .b { background: var(--red); }
+.mvp .bars .col img, .mvp .bars .col .ph { width: 24px; height: 24px; border-radius: 4px; flex: none; background: var(--panel2); }
+.mvp .bars .gap { width: 10px; flex: none; }
+
+/* jogadores */
+.mvp .picker { display: flex; flex-wrap: wrap; gap: 6px; }
+.mvp .pick { appearance: none; background: var(--panel); border: 1px solid var(--line); color: var(--fg); border-radius: 999px; padding: 6px 12px; font: 600 13px var(--sans); cursor: pointer; }
+.mvp .pick[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: #08121f; }
+.mvp .seg { display: inline-flex; border: 1px solid var(--line2); border-radius: 6px; overflow: hidden; }
+.mvp .seg button { appearance: none; background: var(--panel); border: 0; color: var(--muted); font: 600 12px var(--sans); padding: 6px 12px; cursor: pointer; }
+.mvp .seg button[aria-pressed="true"] { background: var(--panel2); color: var(--fg); }
+.mvp .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.mvp .prof { padding: 18px; display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; }
+@media (max-width: 560px) { .mvp .prof { grid-template-columns: 1fr; } }
+.mvp .prof h3 { font-size: 24px; font-weight: 600; }
+.mvp .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; margin-top: 10px; }
+.mvp .tile { background: var(--panel2); border-radius: 6px; padding: 8px 10px; }
+.mvp .tile .lab { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.mvp .tile .val { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; margin-top: 2px; }
+.mvp .streak { display: flex; flex-wrap: wrap; gap: 4px; }
+.mvp .streak span { width: 30px; height: 30px; border-radius: 4px; display: grid; place-items: center; font-size: 11px; font-weight: 700; background: var(--panel2); color: var(--muted); font-variant-numeric: tabular-nums; }
+.mvp .streak span.b1 { background: rgba(60,207,142,.2); color: var(--green); }
+.mvp .streak span.b8 { background: rgba(233,185,73,.2); color: var(--gold); }
+.mvp .streak span.b9 { background: rgba(240,140,62,.22); color: #ffb072; }
+.mvp .streak span.b10 { background: rgba(232,89,79,.28); color: #ff8a80; }
+.mvp .streak span.w { box-shadow: inset 0 -2px 0 var(--blue); }
+.mvp .linkish { appearance: none; background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; text-align: left; }
+.mvp .linkish:hover b { color: var(--blue); }
+.mvp .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 860px) { .mvp .two { grid-template-columns: 1fr; } }
+.mvp .tagx { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+.mvp .tagx.bad { background: rgba(232,89,79,.2); color: #ff8a80; } .mvp .tagx.good { background: rgba(60,207,142,.16); color: var(--green); }
+.mvp .records { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+
+/* sorteio */
+.mvp .draw-ctl { padding: 16px; display: grid; gap: 14px; }
+.mvp .draw-ctl label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.mvp .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.mvp input.txt { background: var(--panel2); color: var(--fg); border: 1px solid var(--line2); border-radius: 6px; padding: 8px 10px; font: 14px var(--sans); min-width: 0; flex: 1 1 220px; }
+.mvp .btn { appearance: none; border: 1px solid var(--line2); background: var(--panel2); color: var(--fg); font: 600 13px var(--sans); padding: 8px 14px; border-radius: 6px; cursor: pointer; }
+.mvp .btn.primary { background: var(--blue); border-color: var(--blue); color: #08121f; font-size: 15px; padding: 10px 22px; }
+.mvp .btn:disabled { opacity: .5; cursor: not-allowed; }
+.mvp .pick .x { margin-left: 6px; color: var(--dim); }
+.mvp .pick.ext { border-style: dashed; }
+.mvp .teams { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 600px) { .mvp .teams { grid-template-columns: 1fr; } }
+.mvp .tcard { padding: 14px; display: grid; gap: 6px; }
+.mvp .tcard h3 { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
+.mvp .tcard.azul { border-top: 3px solid var(--blue); } .mvp .tcard.azul h3 { color: var(--blue); }
+.mvp .tcard.vermelho { border-top: 3px solid var(--red); } .mvp .tcard.vermelho h3 { color: var(--red); }
+.mvp .tcard .m { font-size: 16px; font-weight: 600; padding: 6px 0; border-top: 1px solid var(--line); }
+.mvp .tcard .m:first-of-type { border-top: 0; }
+.mvp .note { font-size: 13px; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { .mvp .tcard { animation: mvp-pop .35s ease-out both; } .mvp .tcard + .tcard { animation-delay: .08s; } }
+
+/* menu lateral */
+.mvp .layout { display: grid; grid-template-columns: 232px minmax(0, 1fr); min-height: 100%; }
+.mvp .side { position: sticky; top: env(safe-area-inset-top, 0px); align-self: start; max-height: 100vh; overflow-y: auto; background: #0c111d; border-right: 1px solid var(--line); display: flex; flex-direction: column; gap: 18px; padding: 20px 12px; }
+.mvp .brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; padding: 0 6px; }
+.mvp .brand .ink, .mvp .ink { color: var(--gold); }
+.mvp .logo { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; background: linear-gradient(135deg, #6b4a2b, #3a2616); border: 1px solid #8a6238; color: var(--gold); font-size: 16px; }
+.mvp .nav { display: grid; gap: 2px; }
+.mvp .nav button { appearance: none; display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: 0; border-radius: 6px; color: var(--muted); font: 600 14px var(--sans); padding: 10px 12px; cursor: pointer; text-align: left; position: relative; }
+.mvp .nav button svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.mvp .nav button svg .f { fill: currentColor; stroke: none; }
+.mvp .nav button:hover { color: var(--fg); background: rgba(255,255,255,.03); }
+.mvp .nav button[aria-selected="true"] { color: var(--fg); background: var(--panel2); }
+.mvp .nav button[aria-selected="true"]::before { content: ""; position: absolute; left: -12px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: var(--blue); }
+.mvp .nav button[aria-selected="true"] svg { color: var(--blue); }
+.mvp .nav button:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.mvp .side-foot { margin-top: auto; padding: 12px; border-top: 1px solid var(--line); display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+.mvp .side-foot .lab { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; }
+.mvp .side-foot .v { color: var(--fg); font-weight: 600; font-size: 14px; }
+.mvp .side-foot p { line-height: 1.45; margin-top: 4px; color: var(--dim); }
+.mvp .main { min-width: 0; }
+.mvp .top { background: linear-gradient(180deg, #172338 0%, var(--bg) 100%); border-bottom: 1px solid var(--line); }
+.mvp .top-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: end; justify-content: space-between; padding-block: 18px; }
+.mvp .top-row > div { min-width: 0; }
+@media (max-width: 820px) {
+  .mvp .layout { grid-template-columns: 1fr; }
+  .mvp .side { flex-direction: row; align-items: center; max-height: none; overflow-x: auto; overflow-y: hidden; padding: 8px max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px)); gap: 8px; border-right: 0; border-bottom: 1px solid var(--line); z-index: 5; scrollbar-width: none; }
+  .mvp .brand { font-size: 15px; padding: 0 4px; flex: none; }
+  .mvp .brand .logo { width: 26px; height: 26px; font-size: 13px; }
+  .mvp .nav { display: flex; gap: 2px; }
+  .mvp .nav button { flex-direction: column; gap: 3px; padding: 6px 8px; font-size: 10px; white-space: nowrap; width: auto; }
+  .mvp .nav button[aria-selected="true"]::before { left: 8px; right: 8px; top: auto; bottom: -8px; width: auto; height: 3px; border-radius: 3px 3px 0 0; }
+  .mvp .side-foot { display: none; }
+}
+
+/* ultima partida */
+.mvp .latest { overflow: hidden; }
+.mvp .latest-h { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: baseline; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.mvp .latest-h .big { font-size: 22px; font-weight: 700; }
+.mvp .latest-h .big.win { color: var(--blue); } .mvp .latest-h .big.loss { color: var(--red); }
+.mvp .latest-h .meta { color: var(--muted); font-size: 13px; }
+.mvp .scored { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; padding: 16px 18px; }
+.mvp .sc { display: grid; grid-template-columns: 52px 1fr; gap: 12px; align-items: center; padding: 12px; border-radius: 8px; background: var(--panel2); border: 1px solid var(--line); }
+.mvp .sc img, .mvp .sc .ph { width: 52px; height: 52px; border-radius: 8px; background: var(--bg); }
+.mvp .sc .nm { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mvp .sc .ps { font-size: 12px; color: var(--muted); }
+.mvp .sc .pts { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.mvp .sc.p3 { border-color: var(--red); background: linear-gradient(110deg, rgba(232,89,79,.22), var(--panel2) 70%); } .mvp .sc.p3 .pts { color: #ff8a80; }
+.mvp .sc.p2 { border-color: var(--orange); } .mvp .sc.p2 .pts { color: #ffb072; }
+.mvp .sc.p1 { border-color: var(--gold); } .mvp .sc.p1 .pts { color: var(--gold); }
+.mvp .sc.p0 .pts { color: var(--dim); font-size: 14px; font-weight: 600; }
+.mvp .sc.p-1 { border-color: var(--green); background: linear-gradient(110deg, rgba(60,207,142,.16), var(--panel2) 70%); } .mvp .sc.p-1 .pts { color: var(--green); }
+.mvp .scored .none { grid-column: 1 / -1; color: var(--green); font-weight: 600; }
+
+/* títulos */
+.mvp .badges { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.mvp .bdg { display: inline-flex; align-items: center; gap: 7px; padding: 3px 11px 3px 3px; border-radius: 999px; background: #141922; border: 1px solid #7a6330; color: #ecd391; font: 600 12px var(--sans); white-space: nowrap; }
+.mvp .bdg .ic { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; background: radial-gradient(circle at 35% 30%, #4a3c1c, #221b0d); border: 1px solid #9c7f3c; }
+.mvp .bdg.ruim { border-color: #4b5466; color: #c7ced9; }
+.mvp .bdg.ruim .ic { background: radial-gradient(circle at 35% 30%, #343b49, #1a1e27); border-color: #626b7e; }
+.mvp .bdg .n { color: var(--muted); font-weight: 700; margin-left: 1px; }
+.mvp .bdg.pos { padding: 3px 11px; border-color: var(--line2); color: var(--fg); font-weight: 700; background: var(--panel2); }
+.mvp .bdg.pos.b1 { border-color: var(--green); color: var(--green); }
+.mvp .bdg.pos.b8 { border-color: var(--gold); color: var(--gold); }
+.mvp .bdg.pos.b9 { border-color: var(--orange); color: #ffb072; }
+.mvp .bdg.pos.b10 { border-color: var(--red); color: #ff8a80; }
+.mvp .sc .badges { grid-column: 1 / -1; }
+.mvp .tlist { overflow: hidden; }
+.mvp .trow { display: grid; grid-template-columns: minmax(150px, 220px) 1fr; gap: 14px; align-items: center; padding: 10px 14px; border-top: 1px solid var(--line); }
+.mvp .trow:first-child { border-top: 0; }
+@media (max-width: 600px) { .mvp .trow { grid-template-columns: 1fr; } }
+.mvp .tl-l { display: flex; gap: 10px; align-items: center; min-width: 0; }
+.mvp .tl-l img, .mvp .tl-l .ph { width: 36px; height: 36px; border-radius: 6px; flex: none; background: var(--panel2); }
+.mvp .tl-l b { display: block; font-size: 13px; }
+.mvp .tl-l small { display: block; font-size: 11px; color: var(--muted); }
+.mvp .tgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px 16px; }
+.mvp .tgrid div { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); }
+
+/* títulos nos cartões e motivos */
+.mvp .spot .badges { margin-top: 10px; }
+.mvp .spot-titles:empty { display: none; }
+.mvp .whybox { border-top: 1px solid var(--line); padding: 14px 18px 16px; display: grid; gap: 10px; }
+.mvp .why-h { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: var(--red); }
+.mvp .why-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 1000px) { .mvp .why-grid { grid-template-columns: 1fr; } }
+.mvp .why { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: grid; gap: 8px; }
+.mvp .why-t { display: flex; gap: 10px; align-items: center; }
+.mvp .why-t img, .mvp .why-t .ph { width: 32px; height: 32px; border-radius: 6px; flex: none; background: var(--panel2); }
+.mvp .why-t b { display: block; font-size: 14px; }
+.mvp .why-t small { display: block; font-size: 11px; color: var(--muted); }
+.mvp .why ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; font-size: 13px; color: #c4cede; line-height: 1.4; }
+@keyframes mvp-pop { from { transform: translateY(6px); opacity: .2; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .mvp .chev { transition: none; } }
+</style>
+
+<div class="mvp" lang="pt-BR" data-read>
+  <div class="layout">
+    <aside class="side">
+      <div class="brand"><span class="logo" aria-hidden="true">M</span><span>Merda<span class="ink">VP</span></span></div>
+      <nav class="nav" role="tablist" aria-label="Seções" aria-orientation="vertical">
+          <button type="button" role="tab" id="tab-agora" data-tab="agora" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><span>Última partida</span></button>
+          <button type="button" role="tab" id="tab-flex" data-tab="flex" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg><span>Flex · MerdaVP</span></button>
+          <button type="button" role="tab" id="tab-custom" data-tab="custom" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l9 9M4 4h4M4 4v4M20 4l-9 9M20 4h-4M20 4v4M7 15l-3 3 2 2 3-3M17 15l3 3-2 2-3-3"/></svg><span>Personalizadas</span></button>
+          <button type="button" role="tab" id="tab-jogadores" data-tab="jogadores" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span>Jogadores</span></button>
+          <button type="button" role="tab" id="tab-estatisticas" data-tab="estatisticas" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/></svg><span>Estatísticas</span></button>
+          <button type="button" role="tab" id="tab-galeria" data-tab="galeria" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a8 8 0 0 0-8 8c0 3 1.5 4.5 3 5.5V20h10v-3.5c1.5-1 3-2.5 3-5.5a8 8 0 0 0-8-8z"/><circle cx="9" cy="11" r="1.6" class="f"/><circle cx="15" cy="11" r="1.6" class="f"/><path d="M10 20v-2M14 20v-2"/></svg><span>Galeria da vergonha</span></button>
+          <button type="button" role="tab" id="tab-sorteio" data-tab="sorteio" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="9" r="1.3" class="f"/><circle cx="15" cy="15" r="1.3" class="f"/><circle cx="15" cy="9" r="1.3" class="f"/><circle cx="9" cy="15" r="1.3" class="f"/></svg><span>Sorteio de times</span></button>
+          <button type="button" role="tab" id="tab-regras" data-tab="regras" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3M9 7h6"/></svg><span>Regras</span></button>
+      </nav>
+      <div class="side-foot">
+        <div class="lab">Dados até</div>
+        <div class="v" data-draw="dados-ate" data-source="placar">—</div>
+        <p>Flex: busca automática no PC do Defender. Personalizadas: salvas com o cliente do LoL aberto.</p>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="top">
+        <div class="wrap top-row">
+          <div>
+            <div class="eyebrow">Ranking do grupo · semana de segunda a domingo</div>
+            <p class="lede" data-draw="lede">—</p>
+          </div>
+          <div class="weekpick">
+            <label for="semana">Semana</label>
+            <select class="dash-select" id="semana" data-draw="semanas" data-source="ranking" aria-label="Semana"></select>
+          </div>
+        </div>
+      </header>
+
+      <div class="wrap">
+    <!-- AGORA -->
+    <section class="panel-tab" id="agora" data-panel="agora">
+      <div class="card latest" id="ultima-partida">
+        <div class="latest-h" data-draw="ultima-h" data-source="placar">—</div>
+        <div class="scored" data-draw="ultima-pontos" data-source="placar titulos"></div>
+        <div class="whybox" data-draw="ultima-motivos" data-source="placar"></div>
+      </div>
+      <div class="two">
+        <div>
+          <div class="sec-title"><h2>Pontos do dia</h2><span class="muted" data-draw="hoje-label">—</span></div>
+          <div class="card tablewrap">
+            <table class="rank">
+              <thead><tr><th class="l">Jogador</th><th>Partidas</th><th>10º</th><th>9º</th><th>8º</th><th class="r">Pontos</th></tr></thead>
+              <tbody data-draw="hoje" data-source="partidas aram"></tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <div class="sec-title"><h2>Como atualizar</h2></div>
+          <div class="card rules">
+            <p>Depois da partida, a página recebe os dados novos quando o PC do Defender roda a atualização. Assim que ela roda, quem estiver com a página aberta vê a partida aparecer aqui sozinha, sem recarregar.</p>
+            <p>As personalizadas são salvas a cada 10 minutos enquanto o cliente do LoL estiver aberto.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="sec-title"><h2>Placar</h2><span class="muted">Colocação de todos os jogadores da partida mais recente.</span></div>
+        <div class="matches" data-draw="ultima-placar" data-source="placar"></div>
+      </div>
+    </section>
+
+    <!-- FLEX -->
+    <section class="panel-tab" id="flex" data-panel="flex" hidden>
+      <div class="duo">
+        <div class="card spot worst" id="pior-flex" data-source="ranking">
+          <div data-draw="spot-flex-worst-img"></div>
+          <div>
+            <div class="tag" data-draw="spot-flex-worst-tag">—</div>
+            <div class="who" data-draw="spot-flex-worst-who">—</div>
+            <div class="facts" data-draw="spot-flex-worst-facts">—</div>
+            <div class="badges spot-titles" data-draw="spot-flex-worst-titulos" data-source="titulos premios"></div>
+          </div>
+        </div>
+        <div class="card spot best" id="melhor-flex" data-source="ranking">
+          <div data-draw="spot-flex-best-img"></div>
+          <div>
+            <div class="tag">MVP da semana</div>
+            <div class="who" data-draw="spot-flex-best-who">—</div>
+            <div class="facts" data-draw="spot-flex-best-facts">—</div>
+            <div class="badges spot-titles" data-draw="spot-flex-best-titulos" data-source="titulos premios"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="premios-flex-box">
+        <div class="sec-title"><h2>Awards</h2><span class="muted">Entre os jogadores do grupo, nas flex da semana.</span></div>
+        <div class="awards-wrap" data-draw="premios-flex" data-source="premios"></div>
+      </div>
+
+      <div id="ranking-flex">
+        <div class="sec-title">
+          <h2>Ranking da semana</h2>
+          <span class="muted">8º = 1 ponto, 9º = 2, 10º = 3 e MVP (1º lugar) tira 1, divididos pelas partidas. Quanto maior, pior.</span>
+        </div>
+        <div class="card tablewrap">
+          <table class="rank" data-source="ranking" data-row-key="semana,jogador">
+            <thead>
+              <tr>
+                <th class="l">#</th>
+                <th class="l" data-field="jogador">Jogador</th>
+                <th data-field="partidas">Partidas</th>
+                <th data-field="dez">10º</th>
+                <th data-field="nove">9º</th>
+                <th data-field="oito">8º</th>
+                <th data-field="mvps">MVP</th>
+                <th data-field="pontos">Pontos</th>
+                <th class="r" data-field="nota">Pts/partida</th>
+              </tr>
+            </thead>
+            <tbody data-draw="tabela-flex"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="partidas-flex">
+        <div class="sec-title">
+          <h2>Partidas da semana</h2>
+          <span class="muted">Flex com 3 ou mais do grupo. Clique numa partida para ver o placar.</span>
+        </div>
+        <div class="matches" data-draw="partidas-flex" data-source="partidas placar"></div>
+      </div>
+    </section>
+
+    <!-- PERSONALIZADAS -->
+    <section class="panel-tab" id="custom" data-panel="custom" hidden>
+      <div class="duo">
+        <div class="card spot worst" id="pior-custom" data-source="ranking_aram">
+          <div data-draw="spot-custom-worst-img"></div>
+          <div>
+            <div class="tag">Pior nas personalizadas</div>
+            <div class="who" data-draw="spot-custom-worst-who">—</div>
+            <div class="facts" data-draw="spot-custom-worst-facts">—</div>
+          </div>
+        </div>
+        <div class="card spot best" id="melhor-custom" data-source="ranking_aram">
+          <div data-draw="spot-custom-best-img"></div>
+          <div>
+            <div class="tag">Mais limpo nas personalizadas</div>
+            <div class="who" data-draw="spot-custom-best-who">—</div>
+            <div class="facts" data-draw="spot-custom-best-facts">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="premios-custom-box">
+        <div class="sec-title"><h2>Awards</h2><span class="muted">Entre os jogadores do grupo, nas personalizadas da semana.</span></div>
+        <div class="awards-wrap" data-draw="premios-custom" data-source="premios"></div>
+      </div>
+
+      <div id="ranking-custom">
+        <div class="sec-title">
+          <h2>Ranking das personalizadas</h2>
+          <span class="muted">Fora do MerdaVP oficial. As três últimas colocações levam 3, 2 e 1 pontos, e o MVP (1º lugar) tira 1.</span>
+        </div>
+        <div class="card tablewrap">
+          <table class="rank" data-source="ranking_aram" data-row-key="semana,jogador">
+            <thead>
+              <tr>
+                <th class="l">#</th>
+                <th class="l" data-field="jogador">Jogador</th>
+                <th data-field="partidas">Partidas</th>
+                <th data-field="seis">Último</th>
+                <th data-field="cinco">Penúlt.</th>
+                <th data-field="quatro">Antepen.</th>
+                <th data-field="mvps">MVP</th>
+                <th data-field="pontos">Pontos</th>
+                <th class="r" data-field="nota">Pts/partida</th>
+              </tr>
+            </thead>
+            <tbody data-draw="tabela-custom"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="partidas-custom">
+        <div class="sec-title">
+          <h2>Personalizadas da semana</h2>
+          <span class="muted">De 3x3 a 5x5, as que o Defender jogou. Clique numa partida para ver o placar.</span>
+        </div>
+        <div class="matches" data-draw="partidas-custom" data-source="aram placar"></div>
+      </div>
+    </section>
+
+    <!-- JOGADORES -->
+    <section class="panel-tab" id="jogadores" data-panel="jogadores" hidden>
+      <div class="toolbar">
+        <div class="picker" data-draw="jog-picker" data-source="perfis"></div>
+        <div class="seg" role="group" aria-label="Tipo de partida">
+          <button type="button" data-fila="flex" aria-pressed="true">Flex</button>
+          <button type="button" data-fila="personalizada" aria-pressed="false">Personalizadas</button>
+        </div>
+      </div>
+      <div class="card prof" id="perfil" data-source="perfis">
+        <div data-draw="perfil-img"></div>
+        <div>
+          <h3 data-draw="perfil-nome">—</h3>
+          <p class="muted">Desde 29/10, em todas as semanas.</p>
+          <div class="tiles" data-draw="perfil-tiles"></div>
+        </div>
+      </div>
+      <div>
+        <div class="sec-title"><h2>Coleção de títulos</h2><span class="muted">Quantas vezes cada título caiu, zueira primeiro. Os com brilho vêm dos Awards da semana. Passe o mouse para ver o motivo.</span></div>
+        <div class="card" style="padding: 14px;"><div class="badges" data-draw="perfil-titulos" data-source="titulos_contagem"></div></div>
+      </div>
+      <div>
+        <div class="sec-title"><h2>Títulos por partida</h2><span class="muted">As 10 partidas mais recentes.</span></div>
+        <div class="card tlist" data-draw="perfil-titulos-partidas" data-source="titulos"></div>
+      </div>
+      <div>
+        <div class="sec-title"><h2>Últimas colocações</h2><span class="muted">Da mais recente para a mais antiga. Sublinhado azul = vitória.</span></div>
+        <div class="card" style="padding: 14px;"><div class="streak" data-draw="perfil-streak" data-source="placar"></div></div>
+      </div>
+      <div>
+        <div class="sec-title"><h2>Campeões</h2><span class="muted">Colocação média: quanto menor, melhor.</span></div>
+        <div class="card tablewrap">
+          <table class="rank" data-source="perfil_campeoes" data-row-key="fila,jogador,campeao_id">
+            <thead><tr>
+              <th class="l">Campeão</th>
+              <th data-field="jogos">Jogos</th>
+              <th data-field="win_pct">Vitórias</th>
+              <th data-field="kda">KDA</th>
+              <th class="r" data-field="col_media">Colocação média</th>
+            </tr></thead>
+            <tbody data-draw="perfil-campeoes"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESTATÍSTICAS -->
+    <section class="panel-tab" id="estatisticas" data-panel="estatisticas" hidden>
+      <div class="toolbar">
+        <p class="muted">Todas as partidas desde 29/10, só os jogadores do grupo.</p>
+        <div class="seg" role="group" aria-label="Tipo de partida">
+          <button type="button" data-fila="flex" aria-pressed="true">Flex</button>
+          <button type="button" data-fila="personalizada" aria-pressed="false">Personalizadas</button>
+        </div>
+      </div>
+      <div>
+        <div class="sec-title"><h2>Recordes</h2><span class="muted">A melhor (ou pior) marca numa única partida.</span></div>
+        <div class="records" data-draw="recordes" data-source="recordes"></div>
+      </div>
+      <div class="two">
+        <div>
+          <div class="sec-title"><h2>Campeões do grupo</h2><span class="muted">2 jogos ou mais. Do mais maldito ao mais abençoado.</span></div>
+          <div class="card tablewrap">
+            <table class="rank" data-source="campeoes_grupo" data-row-key="fila,campeao_id">
+              <thead><tr>
+                <th class="l">Campeão</th>
+                <th data-field="jogos">Jogos</th>
+                <th data-field="win_pct">Vitórias</th>
+                <th class="r" data-field="col_media">Col. média</th>
+              </tr></thead>
+              <tbody data-draw="campeoes-grupo"></tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <div class="sec-title"><h2>Duplas</h2><span class="muted">Dois do grupo no mesmo time, 3 jogos ou mais.</span></div>
+          <div class="card tablewrap">
+            <table class="rank" data-source="duplas" data-row-key="fila,dupla">
+              <thead><tr>
+                <th class="l" data-field="dupla">Dupla</th>
+                <th data-field="jogos">Jogos</th>
+                <th data-field="win_pct">Vitórias</th>
+                <th class="r" data-field="col_media">Col. média</th>
+              </tr></thead>
+              <tbody data-draw="duplas"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALERIA -->
+    <section class="panel-tab" id="galeria" data-panel="galeria" hidden>
+      <div>
+        <div class="sec-title">
+          <h2>MerdaVP de cada semana</h2>
+          <span class="muted">Quem for MerdaVP 5 vezes no ano troca de nick (regra 9).</span>
+        </div>
+        <div class="hall" data-draw="historico" data-source="merdavps"></div>
+      </div>
+      <div>
+        <div class="sec-title"><h2>Contagem no ano</h2><span class="muted">Só semanas encerradas.</span></div>
+        <div class="tally" data-draw="contagem" data-source="merdavps"></div>
+      </div>
+      <div>
+        <div class="sec-title"><h2>Pior das personalizadas por semana</h2><span class="muted">Fora da contagem oficial.</span></div>
+        <div class="hall" data-draw="historico-custom" data-source="ranking_aram"></div>
+      </div>
+    </section>
+
+    <!-- SORTEIO -->
+    <section class="panel-tab" id="sorteio" data-panel="sorteio" hidden>
+      <div class="card draw-ctl">
+        <div>
+          <label>Quem vai jogar</label>
+          <p class="note">Toque para marcar. Sorteio totalmente aleatório, sem olhar ranking.</p>
+        </div>
+        <div class="picker" data-draw="sorteio-jogadores" data-source="placar"></div>
+        <div class="row">
+          <button type="button" class="btn" id="sorteio-todos">Marcar todos do grupo</button>
+          <button type="button" class="btn" id="sorteio-limpar">Desmarcar todos</button>
+        </div>
+        <div>
+          <label for="sorteio-nome">Adicionar alguém de fora do grupo</label>
+          <div class="row" style="margin-top: 6px;">
+            <input class="txt" id="sorteio-nome" type="text" placeholder="Nome (pode separar vários por vírgula)" autocomplete="off">
+            <button type="button" class="btn" id="sorteio-add">Adicionar</button>
+          </div>
+        </div>
+        <div class="row">
+          <label for="sorteio-tam">Jogadores por time</label>
+          <select class="dash-select" id="sorteio-tam" aria-label="Jogadores por time">
+            <option value="1">1x1</option>
+            <option value="2">2x2</option>
+            <option value="3" selected>3x3</option>
+            <option value="4">4x4</option>
+            <option value="5">5x5</option>
+          </select>
+        </div>
+        <div class="row">
+          <button type="button" class="btn primary" id="sorteio-go">Sortear times</button>
+          <button type="button" class="btn" id="sorteio-copy">Copiar times</button>
+          <span class="note" data-draw="sorteio-status">—</span>
+        </div>
+      </div>
+      <div data-draw="sorteio-resultado"></div>
+    </section>
+
+    <!-- REGRAS -->
+    <section class="panel-tab" id="regras" data-panel="regras" hidden>
+      <div class="card rules">
+        <h3>Regras do MerdaVP</h3>
+        <ol>
+          <li>Vale flex com 3 ou mais do grupo no mesmo time.</li>
+          <li>Até os 3 piores do grupo na partida pontuam se ficarem entre 8º e 10º: 8º vale 1, 9º vale 2 e 10º vale 3.</li>
+          <li>Quem for o MVP da flex (1º lugar entre os 10 jogadores) tira 1 ponto do seu total de MerdaVP. Vale a partir de 12/11/2026.</li>
+          <li>O pior da semana é quem tiver mais pontos por partida, de segunda a domingo, independente de vitória ou derrota.</li>
+          <li>O eleito pior da semana perde o direito de escolher campeão e rota na semana seguinte e grava um vídeo lendo o roteiro do grupo.</li>
+          <li>Queda de energia ou internet com prova (foto ou print) tira a partida da contagem de todos. É só avisar o Defender.</li>
+          <li>Rage ou quit de propósito: a pessoa vira automaticamente o pior da partida e o grupo julga o agravante.</li>
+          <li>Desempate: menos partidas jogadas, depois mais colocações entre 8º e 10º, depois mais MVPs.</li>
+          <li>Partida iniciada antes da meia-noite (horário de Brasília) conta para o dia em que começou.</li>
+          <li>Quem for MerdaVP 5 vezes no ano troca de nick para um escolhido e votado pelo grupo, a partir de 29/10/2026.</li>
+        </ol>
+        <h3>Títulos</h3>
+        <p>Cada partida dá títulos para quem é do grupo, comparando com todos os jogadores da mesma partida. Os dourados são mérito; os cinza são zueira.</p>
+        <div class="tgrid">
+          <div><span class="bdg bom"><span class="ic">👑</span>Carregou nas Costas</span> 1º lugar</div>
+          <div><span class="bdg bom"><span class="ic">🖐️</span>PENTAKILL</span> pentakill</div>
+          <div><span class="bdg bom"><span class="ic">🔥</span>Quadra Kill</span> quadra kill</div>
+          <div><span class="bdg bom"><span class="ic">🗡️</span>Triplo Abate</span> triple kill</div>
+          <div><span class="bdg bom"><span class="ic">🩸</span>Primeiro Sangue</span> primeiro abate</div>
+          <div><span class="bdg bom"><span class="ic">💥</span>Canhão</span> mais dano</div>
+          <div><span class="bdg bom"><span class="ic">🧱</span>Muralha</span> mais dano recebido</div>
+          <div><span class="bdg bom"><span class="ic">👁️</span>Olho de Sauron</span> mais visão (flex)</div>
+          <div><span class="bdg bom"><span class="ic">🌾</span>Fazendeiro</span> mais farm/min (flex)</div>
+          <div><span class="bdg bom"><span class="ic">🍼</span>Babá do Time</span> mais assistências (10+)</div>
+          <div><span class="bdg bom"><span class="ic">😇</span>Imortal</span> zero mortes</div>
+          <div><span class="bdg bom"><span class="ic">🏚️</span>Demolidor</span> 3+ torres</div>
+          <div><span class="bdg bom"><span class="ic">🧊</span>Freezer</span> mais controle de grupo</div>
+          <div><span class="bdg ruim"><span class="ic">🔦</span>Lanterninha</span> último lugar</div>
+          <div><span class="bdg ruim"><span class="ic">🥊</span>Saco de Pancada</span> mais mortes</div>
+          <div><span class="bdg ruim"><span class="ic">🎁</span>Doador Oficial</span> 10+ mortes (15+ na personalizada)</div>
+          <div><span class="bdg ruim"><span class="ic">🥉</span>KDA de Bronze</span> KDA abaixo de 1</div>
+          <div><span class="bdg ruim"><span class="ic">📸</span>Turista</span> menos de 30% dos abates</div>
+          <div><span class="bdg ruim"><span class="ic">🕊️</span>Pacifista</span> menos dano</div>
+          <div><span class="bdg ruim"><span class="ic">🪙</span>Mendigo</span> &lt;70% do ouro do rival de rota (flex)</div>
+          <div><span class="bdg ruim"><span class="ic">🦯</span>Cego</span> menos visão (flex)</div>
+          <div><span class="bdg ruim"><span class="ic">🦝</span>Ladrão de Kill</span> muito abate, pouca assistência</div>
+        </div>
+        <p>Quem leva um Award na semana também ganha um título na coleção: 🏆 Melhor da Semana, 👊 Rei do Dano, 🍽️ Garçom da Semana, 🔭 Farol da Semana e 🔪 Matador da Semana; e na zueira 🧿 Campeão Amaldiçoado, 🍖 Feeder da Semana, 🦇 Cego da Semana, ☮️ Pacifista da Semana e 🧳 Turista da Semana.</p>
+        <h3>Como sai a colocação de 1º a 10º</h3>
+        <p>Cada jogador recebe uma nota que o compara com os outros da mesma partida em KDA, mortes, participação em abates, dano a campeões, dano recebido, ouro, farm e visão por minuto, com um bônus para quem venceu. A nota foi ajustada com as 34 colocações da planilha antiga e pôs 31 delas entre 8º e 10º. Ela é parecida com o OP Score, mas não bate sempre com o OP.GG.</p>
+        <h3>Personalizadas</h3>
+        <p>Ranking separado, com as personalizadas de 3x3 a 5x5 que o Defender jogou. A nota é a mesma ideia, sem farm e visão. As três últimas colocações levam 3, 2 e 1 pontos. Desde 12/11/2026, o MVP (1º lugar) tira 1 ponto do ranking das personalizadas; isso não mexe no MerdaVP da flex.</p>
+      </div>
+    </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+window.mvp = window.mvp || { semana: null, aba: 'agora' };
+
+const fmt2 = (v) => (Math.round(v * 100) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtK = (v) => (Number(v) >= 1000 ? (Number(v) / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + 'k' : String(v));
+const dia = (iso) => { const [, m, d] = iso.split('-'); return `${d}/${m}`; };
+const fimSemana = (iso) => { const t = new Date(iso + 'T12:00:00Z'); t.setUTCDate(t.getUTCDate() + 6); return t.toISOString().slice(0, 10); };
+const hojeBRT = () => new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10);
+const enc = (s) => encodeURIComponent(String(s));
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+
+/* ---------- cálculos ---------- */
+dash.calc('ranking', {
+  inputs: ['partidas'],
+  title: 'Ranking por semana',
+  description: 'Por semana e jogador: partidas, 10º/9º/8º, MVPs, pontos e pontos por partida, do pior (lugar 1) para o melhor, com o desempate da regra 7.',
+  fn: (partidas) => {
+    const by = new Map();
+    for (const r of partidas) {
+      const k = r.semana + '|' + r.jogador;
+      if (!by.has(k)) by.set(k, { semana: r.semana, jogador: r.jogador, partidas: 0, dez: 0, nove: 0, oito: 0, mvps: 0, pontos: 0 });
+      const s = by.get(k);
+      s.partidas += 1;
+      s.pontos += Number(r.pontos);
+      s.dez += Number(r.posicao) === 10 ? 1 : 0;
+      s.nove += Number(r.posicao) === 9 ? 1 : 0;
+      s.oito += Number(r.posicao) === 8 ? 1 : 0;
+      s.mvps += Number(r.mvp);
+    }
+    const rows = [...by.values()].map((s) => ({ ...s, nota: Math.round((s.pontos / s.partidas) * 100) / 100 }));
+    const out = [];
+    for (const semana of [...new Set(rows.map((r) => r.semana))].sort()) {
+      const w = rows.filter((r) => r.semana === semana).sort((a, b) =>
+        b.pontos / b.partidas - a.pontos / a.partidas ||
+        a.partidas - b.partidas ||
+        (b.dez + b.nove + b.oito) - (a.dez + a.nove + a.oito) ||
+        b.mvps - a.mvps);
+      w.forEach((r, i) => out.push({ ...r, lugar: i + 1 }));
+    }
+    return out;
+  },
+});
+
+dash.calc('merdavps', {
+  inputs: ['ranking'],
+  title: 'MerdaVP de cada semana',
+  description: 'O lugar 1 do ranking flex de cada semana, com quantas vezes cada jogador já foi o pior em semanas encerradas.',
+  fn: (ranking) => {
+    const hoje = new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10);
+    const vezes = {};
+    const rows = ranking.filter((r) => r.lugar === 1).map((r) => {
+      const fim = new Date(r.semana + 'T12:00:00Z'); fim.setUTCDate(fim.getUTCDate() + 6);
+      const encerrada = fim.toISOString().slice(0, 10) < hoje ? 1 : 0;
+      if (encerrada) vezes[r.jogador] = (vezes[r.jogador] || 0) + 1;
+      return { semana: r.semana, jogador: r.jogador, nota: r.nota, partidas: r.partidas, encerrada };
+    });
+    return rows.map((r) => ({ ...r, vezes_no_ano: vezes[r.jogador] || 0 }));
+  },
+});
+
+dash.calc('ranking_aram', {
+  inputs: ['aram'],
+  title: 'Ranking das personalizadas por semana',
+  description: 'Por semana e jogador nas personalizadas (3x3 a 5x5): partidas, vezes em último/penúltimo/antepenúltimo, MVPs, pontos e pontos por partida, do pior (lugar 1) para o melhor.',
+  fn: (personalizadas) => {
+    const by = new Map();
+    for (const r of personalizadas) {
+      const k = r.semana + '|' + r.jogador;
+      if (!by.has(k)) by.set(k, { semana: r.semana, jogador: r.jogador, partidas: 0, seis: 0, cinco: 0, quatro: 0, mvps: 0, pontos: 0 });
+      const s = by.get(k);
+      const doFim = Number(r.jogadores) - Number(r.posicao); // 0 = último
+      s.partidas += 1;
+      s.pontos += Number(r.pontos);
+      s.seis += doFim === 0 ? 1 : 0;
+      s.cinco += doFim === 1 ? 1 : 0;
+      s.quatro += doFim === 2 ? 1 : 0;
+      s.mvps += Number(r.mvp);
+    }
+    const rows = [...by.values()].map((s) => ({ ...s, nota: Math.round((s.pontos / s.partidas) * 100) / 100 }));
+    const out = [];
+    for (const semana of [...new Set(rows.map((r) => r.semana))].sort()) {
+      const w = rows.filter((r) => r.semana === semana).sort((a, b) =>
+        b.pontos / b.partidas - a.pontos / a.partidas || a.partidas - b.partidas ||
+        (b.seis + b.cinco + b.quatro) - (a.seis + a.cinco + a.quatro) || b.mvps - a.mvps);
+      w.forEach((r, i) => out.push({ ...r, lugar: i + 1 }));
+    }
+    return out;
+  },
+});
+
+/* ---------- apoio ---------- */
+function semanas() {
+  const a = dash.data('ranking'), b = dash.data('ranking_aram');
+  const ws = new Set();
+  if (a.status === 'ok') a.data.forEach((r) => ws.add(r.semana));
+  if (b.status === 'ok' && b.data) b.data.forEach((r) => ws.add(r.semana));
+  return [...ws].sort();
+}
+function semanaAtual() {
+  const ws = semanas();
+  if (window.mvp.semana && ws.includes(window.mvp.semana)) return window.mvp.semana;
+  return ws[ws.length - 1] || null;
+}
+function champs() {
+  const g = dash.data('campeoes');
+  const m = new Map();
+  if (g.status === 'ok') for (const c of g.data) m.set(Number(c.campeao_id), c);
+  return m;
+}
+function icon(cid, cls) {
+  const c = champs().get(Number(cid));
+  if (c && c.icone && String(c.icone).startsWith('data:image/')) {
+    const i = el('img', cls); i.src = c.icone; i.alt = c.nome; i.loading = 'lazy'; return i;
+  }
+  const p = el('div', (cls ? cls + ' ' : '') + 'ph'); p.setAttribute('aria-hidden', 'true'); return p;
+}
+const champName = (cid) => (champs().get(Number(cid)) || {}).nome || '';
+function maisJogado(dataset, semana, jogador) {
+  const g = dash.data(dataset);
+  if (g.status !== 'ok') return null;
+  const n = new Map();
+  for (const r of g.data) if (r.semana === semana && r.jogador === jogador) n.set(r.campeao_id, (n.get(r.campeao_id) || 0) + 1);
+  return [...n.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+}
+function rankingDaSemana(id) {
+  const g = dash.data(id);
+  if (g.status !== 'ok' || !g.data) return null;
+  const w = semanaAtual();
+  return { w, rows: g.data.filter((r) => r.semana === w) };
+}
+const PANEL_DRAWS = {
+  agora: ['ultima-h', 'ultima-pontos', 'ultima-motivos', 'hoje-label', 'hoje', 'ultima-placar'],
+  flex: ['spot-flex-worst-img', 'spot-flex-worst-tag', 'spot-flex-worst-who', 'spot-flex-worst-facts', 'spot-flex-best-img', 'spot-flex-best-who', 'spot-flex-best-facts', 'spot-flex-worst-titulos', 'spot-flex-best-titulos', 'premios-flex', 'tabela-flex', 'partidas-flex'],
+  custom: ['spot-custom-worst-img', 'spot-custom-worst-who', 'spot-custom-worst-facts', 'spot-custom-best-img', 'spot-custom-best-who', 'spot-custom-best-facts', 'premios-custom', 'tabela-custom', 'partidas-custom'],
+  jogadores: ['jog-picker', 'perfil-img', 'perfil-nome', 'perfil-tiles', 'perfil-titulos', 'perfil-titulos-partidas', 'perfil-streak', 'perfil-campeoes'],
+  estatisticas: ['recordes', 'campeoes-grupo', 'duplas'],
+  galeria: ['historico', 'contagem', 'historico-custom'],
+  sorteio: ['sorteio-jogadores', 'sorteio-status', 'sorteio-resultado'],
+  regras: [],
+};
+function verPerfil(jogador) { window.mvp.jogador = jogador; abrirAba('jogadores'); dash.setLink('jogadores'); }
+function redrawAll() { dash.draw('lede'); (PANEL_DRAWS[window.mvp.aba] || []).forEach((n) => dash.draw(n)); }
+
+/* ---------- abas ---------- */
+function abrirAba(nome) {
+  window.mvp.aba = nome;
+  document.querySelectorAll('.mvp [data-tab]').forEach((b) => b.setAttribute('aria-selected', b.dataset.tab === nome ? 'true' : 'false'));
+  document.querySelectorAll('.mvp [data-panel]').forEach((p) => { p.hidden = p.dataset.panel !== nome; });
+  (PANEL_DRAWS[nome] || []).forEach((n) => dash.draw(n));
+}
+document.querySelectorAll('.mvp [data-tab]').forEach((b) => b.addEventListener('click', () => { abrirAba(b.dataset.tab); dash.setLink(b.dataset.tab); }));
+{
+  const h = (location.hash || '').slice(1);
+  if (['flex', 'custom', 'jogadores', 'estatisticas', 'galeria', 'sorteio', 'regras'].includes(h)) abrirAba(h);
+}
+
+/* ---------- topo ---------- */
+dash.draw('semanas', (sel) => {
+  const ws = semanas().slice().reverse();
+  const cur = semanaAtual();
+  sel.replaceChildren(...ws.map((w) => new Option(`${dia(w)} a ${dia(fimSemana(w))}`, w)));
+  if (cur) sel.value = cur;
+  sel.onchange = () => { window.mvp.semana = sel.value; redrawAll(); };
+});
+
+dash.draw('lede', (p) => {
+  const s = rankingDaSemana('ranking');
+  if (!s || !s.rows.length) { p.textContent = s ? 'Nenhuma flex válida nesta semana.' : '—'; return; }
+  const w = s.rows[0];
+  const aberta = fimSemana(s.w) >= hojeBRT();
+  const b = el('b', null, w.jogador);
+  b.dataset.source = 'ranking'; b.dataset.field = 'jogador'; b.dataset.where = `semana=${enc(w.semana)}&jogador=${enc(w.jogador)}`;
+  const n = el('b', null, fmt2(w.nota));
+  n.dataset.source = 'ranking'; n.dataset.field = 'nota'; n.dataset.where = `semana=${enc(w.semana)}&jogador=${enc(w.jogador)}`;
+  p.replaceChildren(aberta ? 'Semana em andamento. Por enquanto, ' : `MerdaVP da semana de ${dia(s.w)} a ${dia(fimSemana(s.w))}: `, b,
+    aberta ? ' é o pior da flex, com ' : ', com ', n, ' pontos por partida.');
+});
+
+/* ---------- cartões pior / melhor ---------- */
+function spot(prefix, id, dataset, pick, factsFn, vazio = '—') {
+  const get = () => { const s = rankingDaSemana(id); if (!s || !s.rows.length) return null; return pick(s.rows); };
+  dash.draw(`${prefix}-img`, (box) => {
+    const r = get();
+    box.replaceChildren();
+    if (!r) return;
+    box.append(icon(maisJogado(dataset, r.semana, r.jogador), 'portrait'));
+  });
+  dash.draw(`${prefix}-who`, (box) => {
+    const r = get();
+    if (!r) { box.textContent = rankingDaSemana(id)?.rows.length ? vazio : '—'; return; }
+    const s = el('span', null, r.jogador);
+    s.dataset.source = id; s.dataset.field = 'jogador'; s.dataset.where = `semana=${enc(r.semana)}&jogador=${enc(r.jogador)}`;
+    box.replaceChildren(s);
+  });
+  dash.draw(`${prefix}-facts`, (box) => {
+    const r = get();
+    if (!r) { box.textContent = '—'; return; }
+    const where = `semana=${enc(r.semana)}&jogador=${enc(r.jogador)}`;
+    box.replaceChildren(...factsFn(r).map(([field, val, label, big]) => {
+      const sp = el('span');
+      const b = el(big ? 'div' : 'b', big ? 'big' : null, val);
+      b.dataset.source = id; b.dataset.field = field; b.dataset.where = where;
+      if (big) { sp.style.display = 'grid'; sp.style.gap = '4px'; sp.append(b, el('span', null, label)); }
+      else sp.append(b, ' ' + label);
+      return sp;
+    }));
+  });
+}
+const factsFlex = (r) => [['nota', fmt2(r.nota), 'pontos por partida', true], ['partidas', String(r.partidas), r.partidas === 1 ? 'partida' : 'partidas'], ['dez', String(r.dez), '× 10º'], ['nove', String(r.nove), '× 9º'], ['oito', String(r.oito), '× 8º']];
+const factsFlexBest = (r) => [['mvps', String(r.mvps), r.mvps === 1 ? 'MVP na semana' : 'MVPs na semana', true], ['partidas', String(r.partidas), 'partidas'], ['nota', fmt2(r.nota), 'pts/partida']];
+const factsCustom = (r) => [['nota', fmt2(r.nota), 'pontos por partida', true], ['partidas', String(r.partidas), 'partidas'], ['seis', String(r.seis), '× último'], ['cinco', String(r.cinco), '× penúltimo']];
+const factsCustomBest = (r) => [['nota', fmt2(r.nota), 'pontos por partida', true], ['partidas', String(r.partidas), 'partidas'], ['mvps', String(r.mvps), 'MVP']];
+spot('spot-flex-worst', 'ranking', 'partidas', (rows) => rows[0], factsFlex);
+spot('spot-flex-best', 'ranking', 'partidas', (rows) => rows.filter((r) => r.mvps > 0).sort((a, b) => b.mvps - a.mvps || a.nota - b.nota || a.partidas - b.partidas)[0] || null, factsFlexBest, 'Ninguém foi MVP ainda');
+spot('spot-custom-worst', 'ranking_aram', 'aram', (rows) => rows[0], factsCustom);
+spot('spot-custom-best', 'ranking_aram', 'aram', (rows) => rows[rows.length - 1], factsCustomBest);
+dash.draw('spot-flex-worst-tag', (t) => {
+  const s = rankingDaSemana('ranking');
+  t.textContent = !s ? '—' : fimSemana(s.w) >= hojeBRT() ? 'Pior da semana até agora' : 'MerdaVP da semana';
+});
+
+/* ---------- tabelas ---------- */
+function tabela(name, id, dataset, cols) {
+  dash.draw(name, (tb) => {
+    const s = rankingDaSemana(id);
+    tb.replaceChildren();
+    if (!s) return;
+    if (!s.rows.length) { const tr = el('tr'); const td = el('td', 'l muted', 'Nenhuma partida nesta semana.'); td.colSpan = 9; tr.append(td); tb.append(tr); return; }
+    const max = Math.max(3, ...s.rows.map((r) => r.nota));
+    for (const r of s.rows) {
+      const tr = el('tr', r.lugar === 1 ? 'first' : null);
+      tr.dataset.key = `${enc(r.semana)},${enc(r.jogador)}`;
+      tr.append(el('td', 'l rk', r.lugar === 1 ? '💩' : String(r.lugar)));
+      const who = el('td', 'l'); const pl = el('div', 'pl');
+      const cid = maisJogado(dataset, r.semana, r.jogador);
+      const nm = el('div'); nm.append(el('b', null, r.jogador), el('small', null, cid != null ? champName(cid) : ''));
+      pl.append(icon(cid), nm);
+      const go = el('button', 'linkish'); go.type = 'button'; go.title = `Ver perfil de ${r.jogador}`;
+      go.onclick = () => { window.mvp.fila = dataset === 'aram' ? 'personalizada' : 'flex'; verPerfil(r.jogador); };
+      go.append(pl); who.append(go); tr.append(who);
+      tr.append(el('td', null, String(r.partidas)));
+      cols.forEach(([f, cls]) => { const td = el('td'); td.append(el('span', 'cnt' + (r[f] ? ' ' + cls : ''), String(r[f]))); tr.append(td); });
+      const mv = el('td'); mv.append(el('span', 'cnt' + (r.mvps ? ' mvp1' : ''), String(r.mvps))); tr.append(mv);
+      tr.append(el('td', null, String(r.pontos)));
+      const sc = el('td', 'r'); const pp = el('div', 'ppp');
+      const bar = el('i'); bar.style.width = `${Math.max(2, (r.nota / max) * 80)}px`;
+      pp.append(bar, el('b', null, fmt2(r.nota))); sc.append(pp); tr.append(sc);
+      tb.append(tr);
+    }
+  });
+}
+tabela('tabela-flex', 'ranking', 'partidas', [['dez', 'c10'], ['nove', 'c9'], ['oito', 'c8']]);
+tabela('tabela-custom', 'ranking_aram', 'aram', [['seis', 'c10'], ['cinco', 'c9'], ['quatro', 'c8']]);
+
+/* ---------- partidas com placar ---------- */
+function badgeClass(pos, n) {
+  const doFim = n - pos;
+  if (pos === 1) return 'b1';
+  if (doFim === 0) return 'b10';
+  if (doFim === 1) return 'b9';
+  if (doFim === 2) return 'b8';
+  return '';
+}
+function placarRow(p, n, maxDmg, nosso) {
+  const row = el('div', 'prow' + (p.grupo ? ' us' : ''));
+  const ico = el('div', 'ico'); ico.append(icon(p.campeao_id), el('span', 'lvl', String(p.nivel || ''))); row.append(ico);
+  const nm = el('div', 'nm');
+  nm.append(el('b', null, p.grupo ? `${p.grupo}` : p.jogador), el('small', null, [champName(p.campeao_id), p.role, p.grupo && p.grupo !== p.jogador ? p.jogador : ''].filter(Boolean).join(' · ')));
+  const dm = el('div', 'dmg'); const di = el('i'); di.style.width = `${Math.round((Number(p.dano) / maxDmg) * 100)}%`; dm.append(di); nm.append(dm);
+  row.append(nm);
+  const kda = el('div', 'kda'); const k3 = el('div', 'k3');
+  k3.append(el('span', 'k', String(p.abates)), el('span', 'sl', '/'), el('span', 'd', String(p.mortes)), el('span', 'sl', '/'), el('span', 'a', String(p.assist)));
+  kda.append(k3, el('small', null, `${fmtK(p.dano)} dano · ${p.kp}% KP`), el('small', null, `${p.cs} CS · ${fmtK(p.ouro)} ouro`));
+  row.append(kda);
+  const pos = el('div', 'pos ' + badgeClass(Number(p.posicao), n), `${p.posicao}º`);
+  pos.dataset.source = 'placar'; pos.dataset.field = 'posicao'; pos.dataset.where = `partida=${enc(p.partida)}&jogador=${enc(p.jogador)}`;
+  row.append(pos);
+  return row;
+}
+function partidasDraw(name, dataset, label, linkFn) {
+  dash.draw(name, (box) => {
+    const g = dash.data(dataset), pl = dash.data('placar');
+    box.replaceChildren();
+    if (g.status !== 'ok' || pl.status !== 'ok') { box.textContent = '—'; return; }
+    const w = semanaAtual();
+    const mine = new Map();
+    for (const r of g.data) if (r.semana === w) { if (!mine.has(r.partida)) mine.set(r.partida, []); mine.get(r.partida).push(r); }
+    if (!mine.size) { box.append(el('div', 'empty', 'Nenhuma partida nesta semana.')); return; }
+    const board = new Map();
+    for (const r of pl.data) if (mine.has(String(r.partida))) { const k = String(r.partida); if (!board.has(k)) board.set(k, []); board.get(k).push(r); }
+    const list = [...mine.entries()].sort((a, b) => (a[1][0].inicio < b[1][0].inicio ? 1 : -1));
+    list.forEach(([id, ps]) => box.append(matchCard(id, ps, board.get(String(id)) || [], dataset, label, linkFn)));
+  });
+}
+function matchCard(id, ps, all, dataset, label, linkFn) {
+  const f = ps[0];
+  const n = all.length || Number(f.jogadores) || 10;
+  const ourTeam = (all.find((x) => x.grupo) || {}).time || 'azul';
+  const us = all.filter((x) => x.time === ourTeam).sort((a, b) => a.posicao - b.posicao);
+  const them = all.filter((x) => x.time !== ourTeam).sort((a, b) => a.posicao - b.posicao);
+  const sum = (arr, k) => arr.reduce((t, x) => t + Number(x[k]), 0);
+  const win = Number(f.vitoria) === 1;
+
+  const d = el('details', 'match ' + (win ? 'win' : 'loss'));
+  const s = el('summary');
+  s.append(el('span', 'stripe'));
+  const res = el('div', 'res'); const [dd, hh] = f.inicio.split(' ');
+  res.append(el('b', null, win ? 'Vitória' : 'Derrota'), el('span', null, `${label(f)} · ${Math.round(Number(f.minutos))} min`), el('span', null, `${dia(dd)} às ${hh}`));
+  s.append(res);
+  const score = el('div', 'score');
+  if (all.length) score.append(el('span', 'us', String(sum(us, 'abates'))), el('span', 'x', 'x'), el('span', 'them', String(sum(them, 'abates'))));
+  const ROLE_ORD = { TOP: 0, JG: 1, MID: 2, ADC: 3, SUP: 4 };
+  const ordem = (arr) => arr.slice().sort((a, b) => (ROLE_ORD[a.role] ?? 9) - (ROLE_ORD[b.role] ?? 9) || Number(a.posicao) - Number(b.posicao));
+  const timeSum = (arr, cls) => {
+    const t = el('div', 'tsum ' + cls);
+    ordem(arr).forEach((p) => {
+      const fc = el('div', 'face2' + (p.grupo ? ' us' : ''));
+      fc.title = `${p.grupo || p.jogador} · ${champName(p.campeao_id)} · ${p.posicao}º · ${p.abates}/${p.mortes}/${p.assist}`;
+      const ic = el('div', 'face'); ic.append(icon(p.campeao_id));
+      const bd = el('span', 'badge ' + badgeClass(Number(p.posicao), n), `${p.posicao}º`);
+      bd.dataset.source = 'placar'; bd.dataset.field = 'posicao'; bd.dataset.where = `partida=${enc(p.partida)}&jogador=${enc(p.jogador)}`;
+      ic.append(bd);
+      fc.append(ic, el('span', 'fn', p.grupo || p.jogador));
+      t.append(fc);
+    });
+    return t;
+  };
+  const teams = el('div', 'teams-sum');
+  if (all.length) teams.append(timeSum(us, 'nosso'), score, timeSum(them, 'deles'));
+  else {
+    const t = el('div', 'tsum nosso');
+    ps.forEach((p) => { const fc = el('div', 'face2 us'); const ic = el('div', 'face'); ic.append(icon(p.campeao_id), el('span', 'badge ' + badgeClass(Number(p.posicao), n), `${p.posicao}º`)); fc.append(ic, el('span', 'fn', p.jogador)); t.append(fc); });
+    teams.append(t);
+  }
+  s.append(teams);
+  const chev = el('span', 'chev', '▾'); chev.setAttribute('aria-hidden', 'true'); s.append(chev);
+  d.append(s);
+
+  if (all.length) {
+    const bd = el('div', 'board');
+    const maxDmg = Math.max(1, ...all.map((x) => Number(x.dano)));
+    [[us, true], [them, false]].forEach(([arr, nosso]) => {
+      const t = el('div', 'team ' + (arr[0] ? arr[0].time : ''));
+      const h = el('div', 'team-h');
+      h.append(el('span', 'nm', `${nosso ? 'Nosso time' : 'Adversários'} · ${arr[0] && arr[0].time === 'azul' ? 'azul' : 'vermelho'}`),
+               el('span', 'rs', `${sum(arr, 'abates')} / ${sum(arr, 'mortes')} / ${sum(arr, 'assist')}`));
+      t.append(h);
+      arr.forEach((p) => t.append(placarRow(p, n, maxDmg, nosso)));
+      bd.append(t);
+    });
+    const dc = el('div', 'dmgchart'); dc.append(el('div', 'h', 'Dano a campeões'));
+    const bars = el('div', 'bars');
+    [us, them].forEach((arr, ti) => {
+      if (ti === 1) bars.append(el('div', 'gap'));
+      arr.forEach((p) => {
+        const c = el('div', 'col ' + p.time); c.title = `${p.grupo || p.jogador} · ${champName(p.campeao_id)}: ${Number(p.dano).toLocaleString('pt-BR')} de dano`;
+        const b = el('div', 'b'); b.style.height = `${Math.max(2, (Number(p.dano) / maxDmg) * 100)}px`;
+        c.append(el('span', null, fmtK(p.dano)), b, icon(p.campeao_id)); bars.append(c);
+      });
+    });
+    dc.append(bars); bd.append(dc);
+    const foot = el('div', 'board-foot');
+    foot.append(el('span', null, 'A colocação (1º a ' + n + 'º) vem da nota de desempenho de cada jogador na partida.'));
+    const link = linkFn(id);
+    if (link) { const a = el('a', null, 'Abrir no League of Graphs ↗'); a.href = link; a.target = '_blank'; a.rel = 'noopener'; foot.append(a); }
+    bd.append(foot);
+    d.append(bd);
+  }
+  return d;
+}
+
+partidasDraw('partidas-flex', 'partidas', (f) => f.tipo, (id) => `https://www.leagueofgraphs.com/match/br/${String(id).replace(/^BR1_/, '')}`);
+partidasDraw('partidas-custom', 'aram', (f) => `${f.modo} · ${f.mapa}`, () => null);
+
+/* ---------- galeria ---------- */
+dash.draw('historico', (box) => {
+  const g = dash.data('merdavps');
+  box.replaceChildren();
+  if (g.status !== 'ok' || !g.data) { box.textContent = '—'; return; }
+  for (const r of g.data.slice().reverse()) {
+    const c = el('div', 'card wk' + (Number(r.encerrada) ? '' : ' open'));
+    c.append(icon(maisJogado('partidas', r.semana, r.jogador)));
+    const tx = el('div');
+    tx.append(el('div', 'when', `${dia(r.semana)} a ${dia(fimSemana(r.semana))}${Number(r.encerrada) ? '' : ' · em andamento'}`));
+    const n = el('div', 'n', r.jogador); n.dataset.source = 'merdavps'; n.dataset.field = 'jogador'; n.dataset.where = `semana=${enc(r.semana)}`;
+    const v = el('div', 'v'); const b = el('b', null, fmt2(r.nota)); b.dataset.source = 'merdavps'; b.dataset.field = 'nota'; b.dataset.where = `semana=${enc(r.semana)}`;
+    v.append(b, ` pts/partida em ${r.partidas} partidas`);
+    tx.append(n, v); c.append(tx); box.append(c);
+  }
+});
+dash.draw('contagem', (box) => {
+  const g = dash.data('merdavps');
+  box.replaceChildren();
+  if (g.status !== 'ok' || !g.data) return;
+  const last = new Map();
+  for (const r of g.data) if (Number(r.vezes_no_ano) > 0) last.set(r.jogador, r);
+  if (!last.size) { box.append(el('div', 'empty', 'Nenhuma semana encerrada ainda.')); return; }
+  for (const [j, r] of [...last.entries()].sort((a, b) => b[1].vezes_no_ano - a[1].vezes_no_ano)) {
+    const t = el('span', 'tl'); t.append(el('b', null, j));
+    const pips = el('span', 'pips'); for (let i = 0; i < 5; i++) pips.append(el('i', i < r.vezes_no_ano ? 'on' : null));
+    const n = el('span', 'num', `${r.vezes_no_ano}/5`); n.dataset.source = 'merdavps'; n.dataset.field = 'vezes_no_ano'; n.dataset.where = `semana=${enc(r.semana)}`;
+    t.append(pips, n); box.append(t);
+  }
+});
+dash.draw('historico-custom', (box) => {
+  const g = dash.data('ranking_aram');
+  box.replaceChildren();
+  if (g.status !== 'ok' || !g.data) { box.textContent = '—'; return; }
+  const piores = g.data.filter((r) => r.lugar === 1).reverse();
+  if (!piores.length) { box.append(el('div', 'empty', 'Nenhuma personalizada registrada ainda.')); return; }
+  for (const r of piores) {
+    const c = el('div', 'card wk' + (fimSemana(r.semana) >= hojeBRT() ? ' open' : ''));
+    c.append(icon(maisJogado('aram', r.semana, r.jogador)));
+    const tx = el('div'); const where = `semana=${enc(r.semana)}&jogador=${enc(r.jogador)}`;
+    tx.append(el('div', 'when', `${dia(r.semana)} a ${dia(fimSemana(r.semana))}`));
+    const n = el('div', 'n', r.jogador); n.dataset.source = 'ranking_aram'; n.dataset.field = 'jogador'; n.dataset.where = where;
+    const v = el('div', 'v'); const b = el('b', null, fmt2(r.nota)); b.dataset.source = 'ranking_aram'; b.dataset.field = 'nota'; b.dataset.where = where;
+    v.append(b, ` pts/partida em ${r.partidas} partidas`);
+    tx.append(n, v); c.append(tx); box.append(c);
+  }
+});
+
+/* ================= NOVO: cálculos das estatísticas ================= */
+const fmt1 = (v) => (Math.round(v * 10) / 10).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const r1 = (v) => Math.round(v * 10) / 10;
+const r2 = (v) => Math.round(v * 100) / 100;
+
+dash.calc('premios', {
+  inputs: ['placar'],
+  title: 'Awards da semana',
+  description: 'Por semana e tipo de partida, entre os jogadores do grupo (preferindo quem jogou 2 ou mais): negativos (pior campeão, pior rota, mais mortes, menos visão, menos dano, menos participação) e positivos (melhor colocação, mais dano, mais assistências, mais visão, mais abates), por média por partida.',
+  fn: (placar) => {
+    const g = placar.filter((r) => r.grupo);
+    const out = [];
+    const topChamp = (rs) => { const m = new Map(); rs.forEach((r) => m.set(r.campeao_id, (m.get(r.campeao_id) || 0) + 1)); return [...m.entries()].sort((a, b) => b[1] - a[1])[0][0]; };
+    for (const k of new Set(g.map((r) => r.semana + '|' + r.fila))) {
+      const [semana, fila] = k.split('|');
+      const flex = fila === 'flex';
+      const rows = g.filter((r) => r.semana === semana && r.fila === fila);
+      const agg = (keyFn) => {
+        const m = new Map();
+        for (const r of rows) { const kk = keyFn(r); if (kk == null || kk === '') continue; if (!m.has(kk)) m.set(kk, []); m.get(kk).push(r); }
+        return [...m.entries()].map(([id, rs]) => ({ id, rs, n: rs.length, avg: (f) => rs.reduce((t, x) => t + Number(f(x)), 0) / rs.length }));
+      };
+      const pick = (list, val, dir) => {
+        const two = list.filter((x) => x.n >= 2);
+        const L = two.length ? two : list;
+        if (!L.length) return null;
+        return L.map((x) => ({ ...x, v: val(x) })).sort((a, b) => dir * (b.v - a.v) || b.n - a.n)[0];
+      };
+      const add = (premio, tipo, x, extra) => { if (x) out.push({ semana, fila, premio, tipo, valor: Math.round(x.v * 100) / 100, jogos: x.n, ...extra }); };
+      const players = agg((r) => r.grupo);
+      const pessoa = (premio, tipo, val, dir) => { const x = pick(players, val, dir); add(premio, tipo, x, x && { jogador: x.id, campeao_id: topChamp(x.rs) }); };
+      // negativos
+      let x = pick(agg((r) => r.campeao_id), (p) => p.avg((r) => r.posicao), 1);
+      add('pior_campeao', 'ruim', x, x && { jogador: [...new Set(x.rs.map((r) => r.grupo))].join(', '), campeao_id: x.id });
+      if (flex) {
+        x = pick(agg((r) => r.role), (p) => p.avg((r) => r.posicao), 1);
+        add('pior_rota', 'ruim', x, x && { jogador: x.id, campeao_id: topChamp(x.rs) });
+      }
+      pessoa('mortes', 'ruim', (p) => p.avg((r) => r.mortes), 1);
+      if (flex) pessoa('visao', 'ruim', (p) => p.avg((r) => Number(r.visao) / Math.max(1, Number(r.minutos))), -1);
+      else {
+        pessoa('pacifista', 'ruim', (p) => p.avg((r) => r.dano), -1);
+        pessoa('turista', 'ruim', (p) => p.avg((r) => r.kp), -1);
+      }
+      // positivos
+      pessoa('melhor', 'bom', (p) => p.avg((r) => r.posicao), -1);
+      pessoa('dano', 'bom', (p) => p.avg((r) => r.dano), 1);
+      pessoa('assist', 'bom', (p) => p.avg((r) => r.assist), 1);
+      if (flex) pessoa('olho', 'bom', (p) => p.avg((r) => Number(r.visao) / Math.max(1, Number(r.minutos))), 1);
+      else pessoa('abates', 'bom', (p) => p.avg((r) => r.abates), 1);
+    }
+    return out;
+  },
+});
+
+function resumo(rs) {
+  const n = rs.length, s = (f) => rs.reduce((t, r) => t + Number(r[f]), 0);
+  return {
+    jogos: n, vitorias: s('vitoria'), win_pct: Math.round((100 * s('vitoria')) / n),
+    kda: r2((s('abates') + s('assist')) / Math.max(1, s('mortes'))),
+    col_media: r1(s('posicao') / n),
+  };
+}
+function agrupa(rows, keyFn) {
+  const m = new Map();
+  for (const r of rows) { const k = keyFn(r); if (!m.has(k)) m.set(k, []); m.get(k).push(r); }
+  return m;
+}
+
+dash.calc('perfis', {
+  inputs: ['placar'],
+  title: 'Perfil de cada jogador',
+  description: 'Por tipo de partida e jogador do grupo, desde 29/10: partidas, vitórias, KDA, colocação média, MVPs e dano médio.',
+  fn: (placar) => {
+    const out = [];
+    for (const [k, rs] of agrupa(placar.filter((r) => r.grupo), (r) => r.fila + '|' + r.grupo)) {
+      const [fila, jogador] = k.split('|');
+      const b = resumo(rs);
+      out.push({ fila, jogador, partidas: b.jogos, vitorias: b.vitorias, win_pct: b.win_pct, kda: b.kda, col_media: b.col_media,
+        mvps: rs.filter((r) => Number(r.posicao) === 1).length,
+        dano_medio: Math.round(rs.reduce((t, r) => t + Number(r.dano), 0) / rs.length) });
+    }
+    return out;
+  },
+});
+
+dash.calc('perfil_campeoes', {
+  inputs: ['placar'],
+  title: 'Campeões de cada jogador',
+  description: 'Por tipo de partida, jogador do grupo e campeão: jogos, % de vitórias, KDA e colocação média.',
+  fn: (placar) => {
+    const out = [];
+    for (const [k, rs] of agrupa(placar.filter((r) => r.grupo), (r) => r.fila + '|' + r.grupo + '|' + r.campeao_id)) {
+      const [fila, jogador, cid] = k.split('|');
+      const b = resumo(rs);
+      out.push({ fila, jogador, campeao_id: Number(cid), jogos: b.jogos, win_pct: b.win_pct, kda: b.kda, col_media: b.col_media });
+    }
+    return out;
+  },
+});
+
+dash.calc('campeoes_grupo', {
+  inputs: ['placar'],
+  title: 'Campeões do grupo',
+  description: 'Por tipo de partida e campeão jogado por alguém do grupo 2 vezes ou mais: jogos, % de vitórias, colocação média e quem jogou.',
+  fn: (placar) => {
+    const out = [];
+    for (const [k, rs] of agrupa(placar.filter((r) => r.grupo), (r) => r.fila + '|' + r.campeao_id)) {
+      if (rs.length < 2) continue;
+      const [fila, cid] = k.split('|');
+      const b = resumo(rs);
+      out.push({ fila, campeao_id: Number(cid), jogos: b.jogos, win_pct: b.win_pct, col_media: b.col_media, quem: [...new Set(rs.map((r) => r.grupo))].join(', ') });
+    }
+    return out;
+  },
+});
+
+dash.calc('duplas', {
+  inputs: ['placar'],
+  title: 'Duplas do grupo',
+  description: 'Por tipo de partida, cada par do grupo que jogou no mesmo time 3 vezes ou mais: jogos, % de vitórias e colocação média dos dois.',
+  fn: (placar) => {
+    const m = new Map();
+    for (const [, rs] of agrupa(placar.filter((r) => r.grupo), (r) => r.partida + '|' + r.time)) {
+      const ps = rs.slice().sort((a, b) => (a.grupo < b.grupo ? -1 : 1));
+      for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) {
+        const k = ps[i].fila + '|' + ps[i].grupo + ' + ' + ps[j].grupo;
+        if (!m.has(k)) m.set(k, { jogos: 0, vitorias: 0, pos: 0 });
+        const s = m.get(k); s.jogos += 1; s.vitorias += Number(ps[i].vitoria); s.pos += (Number(ps[i].posicao) + Number(ps[j].posicao)) / 2;
+      }
+    }
+    const out = [];
+    for (const [k, s] of m) {
+      if (s.jogos < 3) continue;
+      const [fila, dupla] = k.split('|');
+      out.push({ fila, dupla, jogos: s.jogos, win_pct: Math.round((100 * s.vitorias) / s.jogos), col_media: r1(s.pos / s.jogos) });
+    }
+    return out;
+  },
+});
+
+dash.calc('recordes', {
+  inputs: ['placar'],
+  title: 'Recordes',
+  description: 'Por tipo de partida, a maior marca de um jogador do grupo numa única partida: abates, mortes, assistências, dano, melhor e pior KDA.',
+  fn: (placar) => {
+    const defs = [
+      ['abates', 'Mais abates', (r) => Number(r.abates), 1],
+      ['mortes', 'Mais mortes', (r) => Number(r.mortes), 1],
+      ['assist', 'Mais assistências', (r) => Number(r.assist), 1],
+      ['dano', 'Maior dano', (r) => Number(r.dano), 1],
+      ['kda', 'Melhor KDA', (r) => (Number(r.abates) + Number(r.assist)) / Math.max(1, Number(r.mortes)), 1],
+      ['pior_kda', 'Pior KDA', (r) => (Number(r.abates) + Number(r.assist)) / Math.max(1, Number(r.mortes)), -1],
+    ];
+    const out = [];
+    for (const [fila, rs] of agrupa(placar.filter((r) => r.grupo), (r) => r.fila)) {
+      for (const [recorde, titulo, f, dir] of defs) {
+        const best = rs.slice().sort((a, b) => dir * (f(b) - f(a)) || (a.inicio < b.inicio ? -1 : 1))[0];
+        out.push({ fila, recorde, titulo, jogador: best.grupo, campeao_id: best.campeao_id, valor: r2(f(best)), dia: best.dia, partida: best.partida,
+          kda_txt: `${best.abates}/${best.mortes}/${best.assist}` });
+      }
+    }
+    return out;
+  },
+});
+
+/* ================= NOVO: prêmios ================= */
+const PREMIOS = [
+  // negativos primeiro
+  ['pior_campeao', 'Pior campeão', 'bad', (r) => champName(r.campeao_id), null],
+  ['pior_rota', 'Pior rota', 'bad', (r) => r.jogador, (r) => ['colocação média ', fmt1(r.valor) + 'º']],
+  ['mortes', 'Doador de abates', 'bad', (r) => r.jogador, (r) => ['', fmt1(r.valor) + ' mortes por partida']],
+  ['visao', 'Cego da semana', 'bad', (r) => r.jogador, (r) => ['', fmt2(r.valor) + ' de visão por minuto']],
+  ['pacifista', 'Pacifista', 'bad', (r) => r.jogador, (r) => ['só ', fmtK(Math.round(r.valor)) + ' de dano por partida']],
+  ['turista', 'Turista', 'bad', (r) => r.jogador, (r) => ['participou de ', Math.round(r.valor) + '% dos abates']],
+  // positivos
+  ['melhor', 'Melhor player', 'good', (r) => r.jogador, (r) => ['colocação média ', fmt1(r.valor) + 'º']],
+  ['dano', 'Rei do dano', 'good', (r) => r.jogador, (r) => ['', fmtK(Math.round(r.valor)) + ' de dano por partida']],
+  ['assist', 'Garçom', 'good', (r) => r.jogador, (r) => ['', fmt1(r.valor) + ' assistências por partida']],
+  ['olho', 'Olho de Sauron', 'good', (r) => r.jogador, (r) => ['', fmt2(r.valor) + ' de visão por minuto']],
+  ['abates', 'Matador', 'good', (r) => r.jogador, (r) => ['', fmt1(r.valor) + ' abates por partida']],
+];
+function premiosDraw(name, fila) {
+  dash.draw(name, (box) => {
+    const g = dash.data('premios');
+    box.replaceChildren();
+    if (g.status !== 'ok' || !g.data) { box.textContent = '—'; return; }
+    const w = semanaAtual();
+    const rows = g.data.filter((r) => r.semana === w && r.fila === fila);
+    if (!rows.length) { box.append(el('div', 'empty', 'Nenhuma partida nesta semana.')); return; }
+    for (const [grupoCls, rotulo] of [['bad', 'Zueira'], ['good', 'Mérito']]) {
+      const grid = el('div', 'awards');
+      for (const [premio, titulo, cls, whoFn, valFn] of PREMIOS) {
+        if (cls !== grupoCls) continue;
+        const r = rows.find((x) => x.premio === premio);
+        if (!r) continue;
+        const where = `semana=${enc(w)}&fila=${enc(fila)}&premio=${enc(premio)}`;
+        const c = el('div', 'card aw ' + cls); c.id = `premio-${fila}-${premio}`;
+        c.append(icon(r.campeao_id));
+        const tx = el('div'); tx.style.minWidth = '0';
+        const who = el('div', 'w', whoFn(r));
+        const v = el('div', 'v');
+        if (premio === 'pior_campeao') {
+          const vv = el('b', null, fmt1(r.valor) + 'º'); vv.dataset.source = 'premios'; vv.dataset.field = 'valor'; vv.dataset.where = where;
+          v.append(vv, ' de colocação média · ' + r.jogador);
+        } else {
+          who.dataset.source = 'premios'; who.dataset.field = 'jogador'; who.dataset.where = where;
+          const [pre, val] = valFn(r);
+          const b = el('b', null, val); b.dataset.source = 'premios'; b.dataset.field = 'valor'; b.dataset.where = where;
+          v.append(pre, b);
+        }
+        const jg = el('div', 'j', `em ${r.jogos} ${r.jogos === 1 ? 'partida' : 'partidas'}`);
+        tx.append(el('div', 't', titulo), who, v, jg);
+        c.append(tx); grid.append(c);
+      }
+      if (grid.childElementCount) { box.append(el('div', 'aw-label ' + grupoCls, rotulo), grid); }
+    }
+  });
+}
+premiosDraw('premios-flex', 'flex');
+premiosDraw('premios-custom', 'personalizada');
+
+/* ================= NOVO: jogadores ================= */
+window.mvp.fila = window.mvp.fila || 'flex';
+function syncFila() {
+  document.querySelectorAll('.mvp [data-fila]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.fila === window.mvp.fila ? 'true' : 'false'));
+}
+document.querySelectorAll('.mvp [data-fila]').forEach((b) => b.addEventListener('click', () => {
+  window.mvp.fila = b.dataset.fila; syncFila();
+  (PANEL_DRAWS[window.mvp.aba] || []).forEach((n) => dash.draw(n));
+}));
+document.querySelectorAll('.mvp [data-tab="jogadores"]').forEach((b) => b.addEventListener('click', syncFila));
+syncFila();
+
+function jogadorAtual() {
+  const g = dash.data('perfis');
+  if (g.status !== 'ok' || !g.data) return null;
+  const nomes = [...new Set(g.data.map((r) => r.jogador))].sort();
+  if (window.mvp.jogador && nomes.includes(window.mvp.jogador)) return window.mvp.jogador;
+  return nomes.includes('Defender') ? 'Defender' : nomes[0] || null;
+}
+function perfilRow() {
+  const g = dash.data('perfis'); const j = jogadorAtual();
+  if (g.status !== 'ok' || !g.data || !j) return null;
+  return { j, r: g.data.find((x) => x.jogador === j && x.fila === window.mvp.fila) || null };
+}
+dash.draw('jog-picker', (box) => {
+  const g = dash.data('perfis');
+  box.replaceChildren();
+  if (g.status !== 'ok' || !g.data) return;
+  const cur = jogadorAtual();
+  syncFila();
+  for (const j of [...new Set(g.data.map((r) => r.jogador))].sort()) {
+    const b = el('button', 'pick', j); b.type = 'button'; b.setAttribute('aria-pressed', j === cur ? 'true' : 'false');
+    b.onclick = () => { window.mvp.jogador = j; PANEL_DRAWS.jogadores.forEach((n) => dash.draw(n)); };
+    box.append(b);
+  }
+});
+dash.draw('perfil-img', (box) => {
+  const p = perfilRow(); const g = dash.data('perfil_campeoes');
+  box.replaceChildren();
+  if (!p || g.status !== 'ok' || !g.data) return;
+  const top = g.data.filter((r) => r.jogador === p.j && r.fila === window.mvp.fila).sort((a, b) => b.jogos - a.jogos)[0];
+  box.append(icon(top ? top.campeao_id : null, 'portrait'));
+});
+dash.draw('perfil-nome', (h) => { const p = perfilRow(); h.textContent = p ? p.j : '—'; });
+dash.draw('perfil-tiles', (box) => {
+  const p = perfilRow();
+  box.replaceChildren();
+  if (!p) return;
+  if (!p.r) { box.append(el('div', 'empty', window.mvp.fila === 'flex' ? 'Sem flex válidas.' : 'Sem personalizadas registradas.')); return; }
+  const where = `fila=${enc(p.r.fila)}&jogador=${enc(p.j)}`;
+  const tile = (lab, field, val, src = 'perfis', wh = where) => {
+    const t = el('div', 'tile'); t.append(el('div', 'lab', lab));
+    const v = el('div', 'val', val); v.dataset.source = src; v.dataset.field = field; v.dataset.where = wh; t.append(v); return t;
+  };
+  box.append(tile('Partidas', 'partidas', String(p.r.partidas)), tile('Vitórias', 'win_pct', `${p.r.win_pct}%`), tile('KDA', 'kda', fmt2(p.r.kda)),
+    tile('Colocação média', 'col_media', fmt1(p.r.col_media) + 'º'), tile('MVPs', 'mvps', String(p.r.mvps)), tile('Dano médio', 'dano_medio', fmtK(p.r.dano_medio)));
+  if (window.mvp.fila === 'flex') {
+    const mv = dash.data('merdavps');
+    if (mv.status === 'ok' && mv.data) {
+      const last = mv.data.filter((r) => r.jogador === p.j).slice(-1)[0];
+      if (last) box.append(tile('Vezes MerdaVP', 'vezes_no_ano', `${last.vezes_no_ano}/5`, 'merdavps', `semana=${enc(last.semana)}`));
+      else { const t = el('div', 'tile'); t.append(el('div', 'lab', 'Vezes MerdaVP'), el('div', 'val', '0/5')); box.append(t); }
+    }
+  }
+});
+dash.draw('perfil-streak', (box) => {
+  const g = dash.data('placar'); const j = jogadorAtual();
+  box.replaceChildren();
+  if (g.status !== 'ok' || !j) { box.textContent = '—'; return; }
+  const rs = g.data.filter((r) => r.grupo === j && r.fila === window.mvp.fila).sort((a, b) => (a.inicio < b.inicio ? 1 : -1)).slice(0, 24);
+  if (!rs.length) { box.append(el('span', 'muted', 'Nenhuma partida.')); box.lastChild.style.width = 'auto'; return; }
+  for (const r of rs) {
+    const s = el('span', badgeClass(Number(r.posicao), Number(r.jogadores)) + (Number(r.vitoria) ? ' w' : ''), `${r.posicao}º`);
+    s.title = `${dia(r.dia)} · ${champName(r.campeao_id)} · ${r.abates}/${r.mortes}/${r.assist} · ${Number(r.vitoria) ? 'vitória' : 'derrota'}`;
+    s.dataset.source = 'placar'; s.dataset.field = 'posicao'; s.dataset.where = `partida=${enc(r.partida)}&grupo=${enc(j)}`;
+    box.append(s);
+  }
+});
+function champCell(cid, sub) {
+  const td = el('td', 'l'); const pl = el('div', 'pl'); const nm = el('div');
+  nm.append(el('b', null, champName(cid)), el('small', null, sub || ''));
+  pl.append(icon(cid), nm); td.append(pl); return td;
+}
+dash.draw('perfil-campeoes', (tb) => {
+  const g = dash.data('perfil_campeoes'); const j = jogadorAtual();
+  tb.replaceChildren();
+  if (g.status !== 'ok' || !g.data || !j) return;
+  const rs = g.data.filter((r) => r.jogador === j && r.fila === window.mvp.fila).sort((a, b) => b.jogos - a.jogos || a.col_media - b.col_media);
+  if (!rs.length) { const tr = el('tr'); const td = el('td', 'l muted', 'Nenhum campeão.'); td.colSpan = 5; tr.append(td); tb.append(tr); return; }
+  for (const r of rs) {
+    const tr = el('tr'); tr.dataset.key = `${enc(r.fila)},${enc(r.jogador)},${enc(r.campeao_id)}`;
+    tr.append(champCell(r.campeao_id), el('td', null, String(r.jogos)), el('td', null, `${r.win_pct}%`), el('td', null, fmt2(r.kda)), el('td', 'r', fmt1(r.col_media) + 'º'));
+    tb.append(tr);
+  }
+});
+
+/* ================= NOVO: estatísticas ================= */
+dash.draw('recordes', (box) => {
+  const g = dash.data('recordes');
+  box.replaceChildren();
+  if (g.status !== 'ok' || !g.data) { box.textContent = '—'; return; }
+  const rs = g.data.filter((r) => r.fila === window.mvp.fila);
+  if (!rs.length) { box.append(el('div', 'empty', 'Nenhuma partida.')); return; }
+  for (const r of rs) {
+    const bad = r.recorde === 'mortes' || r.recorde === 'pior_kda';
+    const c = el('div', 'card aw ' + (bad ? 'bad' : 'good')); c.id = `recorde-${r.fila}-${r.recorde}`;
+    c.append(icon(r.campeao_id));
+    const tx = el('div'); tx.style.minWidth = '0';
+    const where = `fila=${enc(r.fila)}&recorde=${enc(r.recorde)}`;
+    const who = el('div', 'w', r.jogador); who.dataset.source = 'recordes'; who.dataset.field = 'jogador'; who.dataset.where = where;
+    const v = el('div', 'v'); const b = el('b', null, r.recorde === 'dano' ? Number(r.valor).toLocaleString('pt-BR') : (r.recorde.includes('kda') ? fmt2(r.valor) : String(r.valor)));
+    b.dataset.source = 'recordes'; b.dataset.field = 'valor'; b.dataset.where = where;
+    v.append(b, ` · ${champName(r.campeao_id)} · ${r.kda_txt} · ${dia(r.dia)}`);
+    tx.append(el('div', 't', r.titulo), who, v); c.append(tx); box.append(c);
+  }
+});
+dash.draw('campeoes-grupo', (tb) => {
+  const g = dash.data('campeoes_grupo');
+  tb.replaceChildren();
+  if (g.status !== 'ok' || !g.data) return;
+  const rs = g.data.filter((r) => r.fila === window.mvp.fila).sort((a, b) => b.col_media - a.col_media || b.jogos - a.jogos);
+  if (!rs.length) { const tr = el('tr'); const td = el('td', 'l muted', 'Nenhum campeão com 2 jogos.'); td.colSpan = 4; tr.append(td); tb.append(tr); return; }
+  rs.forEach((r, i) => {
+    const tr = el('tr'); tr.dataset.key = `${enc(r.fila)},${enc(r.campeao_id)}`;
+    const td = champCell(r.campeao_id, r.quem);
+    if (rs.length >= 6 && i < 3) td.querySelector('b').append(el('span', 'tagx bad', 'maldito'));
+    if (rs.length >= 6 && i >= rs.length - 3) td.querySelector('b').append(el('span', 'tagx good', 'abençoado'));
+    tr.append(td, el('td', null, String(r.jogos)), el('td', null, `${r.win_pct}%`), el('td', 'r', fmt1(r.col_media) + 'º'));
+    tb.append(tr);
+  });
+});
+dash.draw('duplas', (tb) => {
+  const g = dash.data('duplas');
+  tb.replaceChildren();
+  if (g.status !== 'ok' || !g.data) return;
+  const rs = g.data.filter((r) => r.fila === window.mvp.fila).sort((a, b) => b.win_pct - a.win_pct || a.col_media - b.col_media);
+  if (!rs.length) { const tr = el('tr'); const td = el('td', 'l muted', 'Nenhuma dupla com 3 jogos.'); td.colSpan = 4; tr.append(td); tb.append(tr); return; }
+  rs.forEach((r, i) => {
+    const tr = el('tr'); tr.dataset.key = `${enc(r.fila)},${enc(r.dupla)}`;
+    const td = el('td', 'l'); const b = el('b', null, r.dupla); td.append(b);
+    if (rs.length >= 4 && i === 0) b.append(el('span', 'tagx good', 'melhor'));
+    if (rs.length >= 4 && i === rs.length - 1) b.append(el('span', 'tagx bad', 'pior'));
+    tr.append(td, el('td', null, String(r.jogos)), el('td', null, `${r.win_pct}%`), el('td', 'r', fmt1(r.col_media) + 'º'));
+    tb.append(tr);
+  });
+});
+
+/* ================= NOVO: sorteio de times ================= */
+window.mvp.sorteio = window.mvp.sorteio || { sel: [], ext: [], res: null, msg: '' };
+const S = () => window.mvp.sorteio;
+function grupoNomes() {
+  const g = dash.data('placar');
+  return g.status === 'ok' ? [...new Set(g.data.filter((r) => r.grupo).map((r) => r.grupo))].sort() : [];
+}
+function sorteioRedraw() { ['sorteio-jogadores', 'sorteio-status', 'sorteio-resultado'].forEach((n) => dash.draw(n)); }
+function embaralha(arr) {
+  const a = arr.slice(); const rnd = new Uint32Array(a.length);
+  crypto.getRandomValues(rnd);
+  for (let i = a.length - 1; i > 0; i--) { const j = rnd[i] % (i + 1); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+const tamanho = () => { const s = document.getElementById('sorteio-tam'); return s ? Number(s.value) : 3; };
+function addExterno() {
+  const inp = document.getElementById('sorteio-nome'); if (!inp) return;
+  const nomes = inp.value.split(',').map((s) => s.trim()).filter(Boolean);
+  for (const n of nomes) {
+    if (!S().ext.includes(n) && !grupoNomes().includes(n)) S().ext.push(n);
+    if (!S().sel.includes(n)) S().sel.push(n);
+  }
+  inp.value = ''; S().msg = ''; sorteioRedraw();
+}
+document.getElementById('sorteio-add')?.addEventListener('click', addExterno);
+document.getElementById('sorteio-nome')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addExterno(); } });
+document.getElementById('sorteio-todos')?.addEventListener('click', () => { S().sel = [...new Set([...S().sel, ...grupoNomes()])]; S().msg = ''; sorteioRedraw(); });
+document.getElementById('sorteio-limpar')?.addEventListener('click', () => { S().sel = []; S().res = null; S().msg = ''; sorteioRedraw(); });
+document.getElementById('sorteio-tam')?.addEventListener('change', () => { S().msg = ''; sorteioRedraw(); });
+document.getElementById('sorteio-go')?.addEventListener('click', () => {
+  const n = tamanho(); const pool = S().sel.slice();
+  if (pool.length < 2 * n) { S().res = { erro: `Faltam ${2 * n - pool.length} para um ${n}x${n}. Marque mais gente ou diminua o tamanho dos times.` }; }
+  else { const a = embaralha(pool); S().res = { azul: a.slice(0, n), vermelho: a.slice(n, 2 * n), fora: a.slice(2 * n), n }; }
+  S().msg = ''; sorteioRedraw();
+});
+document.getElementById('sorteio-copy')?.addEventListener('click', () => {
+  const r = S().res;
+  if (!r || r.erro) { S().msg = 'Sorteie os times primeiro.'; dash.draw('sorteio-status'); return; }
+  const txt = `Time azul: ${r.azul.join(', ')}\nTime vermelho: ${r.vermelho.join(', ')}` + (r.fora.length ? `\nDe fora: ${r.fora.join(', ')}` : '');
+  const done = (ok) => { S().msg = ok ? 'Times copiados.' : 'Não deu para copiar. Selecione o texto dos times e copie à mão.'; dash.draw('sorteio-status'); };
+  try { navigator.clipboard.writeText(txt).then(() => done(true), () => done(false)); } catch (e) { done(false); }
+});
+
+dash.draw('sorteio-jogadores', (box) => {
+  box.replaceChildren();
+  const nomes = [...grupoNomes(), ...S().ext];
+  if (!nomes.length) { box.textContent = '—'; return; }
+  for (const n of nomes) {
+    const ext = S().ext.includes(n);
+    const b = el('button', 'pick' + (ext ? ' ext' : ''), n); b.type = 'button';
+    b.setAttribute('aria-pressed', S().sel.includes(n) ? 'true' : 'false');
+    b.onclick = () => { S().sel = S().sel.includes(n) ? S().sel.filter((x) => x !== n) : [...S().sel, n]; S().msg = ''; sorteioRedraw(); };
+    box.append(b);
+    if (ext) {
+      const x = el('button', 'pick', '×'); x.type = 'button'; x.title = `Tirar ${n} da lista`; x.setAttribute('aria-label', `Tirar ${n} da lista`);
+      x.style.padding = '6px 10px';
+      x.onclick = () => { S().ext = S().ext.filter((y) => y !== n); S().sel = S().sel.filter((y) => y !== n); sorteioRedraw(); };
+      box.append(x);
+    }
+  }
+});
+dash.draw('sorteio-status', (s) => {
+  const n = tamanho();
+  s.textContent = S().msg || `${S().sel.length} ${S().sel.length === 1 ? 'marcado' : 'marcados'} · ${n}x${n} precisa de ${2 * n}`;
+});
+dash.draw('sorteio-resultado', (box) => {
+  box.replaceChildren();
+  const r = S().res;
+  if (!r) return;
+  if (r.erro) { box.append(el('div', 'empty', r.erro)); return; }
+  const wrap = el('div', 'teams');
+  [['azul', 'Time azul', r.azul], ['vermelho', 'Time vermelho', r.vermelho]].forEach(([cls, t, arr]) => {
+    const c = el('div', 'card tcard ' + cls); c.append(el('h3', null, t));
+    arr.forEach((n) => c.append(el('div', 'm', n)));
+    wrap.append(c);
+  });
+  box.append(wrap);
+  if (r.fora.length) { const f = el('p', 'note', `Ficaram de fora: ${r.fora.join(', ')}`); f.style.marginTop = '10px'; box.append(f); }
+});
+
+/* ================= NOVO: última partida ================= */
+function ultimaPartida() {
+  const g = dash.data('placar');
+  if (g.status !== 'ok' || !g.data.length) return null;
+  let last = null;
+  for (const r of g.data) if (!last || r.inicio > last.inicio || (r.inicio === last.inicio && String(r.partida) > String(last.partida))) last = r;
+  return { id: String(last.partida), fila: last.fila, rows: g.data.filter((r) => String(r.partida) === String(last.partida)) };
+}
+const LINK_FLEX = (id) => `https://www.leagueofgraphs.com/match/br/${String(id).replace(/^BR1_/, '')}`;
+dash.draw('dados-ate', (v) => {
+  const u = ultimaPartida();
+  if (!u) { v.textContent = '—'; return; }
+  const [d, h] = u.rows[0].inicio.split(' ');
+  v.textContent = `${dia(d)} às ${h}`;
+});
+dash.draw('ultima-h', (box) => {
+  const u = ultimaPartida();
+  box.replaceChildren();
+  if (!u) { box.textContent = '—'; return; }
+  const f = u.rows.find((r) => r.grupo) || u.rows[0];
+  const win = Number(f.vitoria) === 1;
+  const [d, h] = f.inicio.split(' ');
+  const left = el('div');
+  left.append(el('div', 'eyebrow', 'Partida mais recente'), el('div', 'big ' + (win ? 'win' : 'loss'), win ? 'Vitória' : 'Derrota'));
+  const nGrupo = new Set(u.rows.filter((r) => r.grupo && r.time === f.time).map((r) => r.grupo)).size;
+  const tipo = u.fila === 'flex' ? `Flex com ${nGrupo}` : `Personalizada ${u.rows.length / 2}x${u.rows.length / 2}`;
+  box.append(left, el('div', 'meta', `${tipo} · ${dia(d)} às ${h} · ${Math.round(Number(f.minutos))} min`));
+});
+function pontosNaPartida(u) {
+  const ds = u.fila === 'flex' ? 'partidas' : 'aram';
+  const g = dash.data(ds);
+  const map = new Map();
+  if (g.status === 'ok') for (const r of g.data) if (String(r.partida) === u.id) map.set(r.jogador, r);
+  return { ds, map };
+}
+dash.draw('ultima-pontos', (box) => {
+  const u = ultimaPartida();
+  box.replaceChildren();
+  if (!u) return;
+  const { ds, map } = pontosNaPartida(u);
+  const grupo = u.rows.filter((r) => r.grupo).sort((a, b) => b.posicao - a.posicao);
+  if (!grupo.some((r) => Number((map.get(r.grupo) || {}).pontos) > 0)) box.append(el('div', 'none', 'Ninguém do grupo ficou entre os três últimos. Partida limpa!'));
+  for (const r of grupo) {
+    const pr = map.get(r.grupo);
+    const pts = pr ? Number(pr.pontos) : 0;
+    const c = el('div', `sc p${pts}`);
+    c.append(icon(r.campeao_id));
+    const tx = el('div'); tx.style.minWidth = '0';
+    const pe = el('div', 'pts', pts > 0 ? `+${pts} ${pts === 1 ? 'ponto' : 'pontos'}` : pts < 0 ? `${pts} ponto · MVP` : 'sem pontos');
+    if (pr) { pe.dataset.source = ds; pe.dataset.field = 'pontos'; pe.dataset.where = `partida=${enc(u.id)}&jogador=${enc(r.grupo)}`; }
+    tx.append(el('div', 'nm', r.grupo), el('div', 'ps', `${r.posicao}º de ${r.jogadores} · ${champName(r.campeao_id)} · ${r.abates}/${r.mortes}/${r.assist}`), pe);
+    c.append(tx);
+    const ts = titulosDe(u.id, r.grupo);
+    if (ts.length) { const bs = el('div', 'badges'); ts.forEach((t) => bs.append(badge(t))); c.append(bs); }
+    box.append(c);
+  }
+});
+dash.draw('hoje-label', (s) => {
+  const u = ultimaPartida();
+  if (!u) { s.textContent = '—'; return; }
+  s.textContent = `${u.fila === 'flex' ? 'Flex' : 'Personalizadas'} de ${dia(u.rows[0].dia)}, somando as partidas do dia.`;
+});
+dash.draw('hoje', (tb) => {
+  const u = ultimaPartida();
+  tb.replaceChildren();
+  if (!u) return;
+  const g = dash.data(u.fila === 'flex' ? 'partidas' : 'aram');
+  if (g.status !== 'ok') return;
+  const day = u.rows[0].dia;
+  const by = new Map();
+  for (const r of g.data) if (r.dia === day) {
+    if (!by.has(r.jogador)) by.set(r.jogador, { j: r.jogador, n: 0, p: 0, a: 0, b: 0, c: 0 });
+    const s = by.get(r.jogador); const doFim = Number(r.jogadores || 10) - Number(r.posicao);
+    s.n += 1; s.p += Number(r.pontos); s.a += doFim === 0 ? 1 : 0; s.b += doFim === 1 ? 1 : 0; s.c += doFim === 2 ? 1 : 0;
+  }
+  const rows = [...by.values()].sort((x, y) => y.p - x.p || x.n - y.n);
+  rows.forEach((s, i) => {
+    const tr = el('tr', i === 0 && s.p > 0 ? 'first' : null);
+    const who = el('td', 'l'); who.append(el('b', null, s.j));
+    const cnt = (v, cls) => { const td = el('td'); td.append(el('span', 'cnt' + (v ? ' ' + cls : ''), String(v))); return td; };
+    tr.append(who, el('td', null, String(s.n)), cnt(s.a, 'c10'), cnt(s.b, 'c9'), cnt(s.c, 'c8'), el('td', 'r', String(s.p)));
+    tb.append(tr);
+  });
+});
+dash.draw('ultima-placar', (box) => {
+  const u = ultimaPartida();
+  box.replaceChildren();
+  if (!u) { box.textContent = '—'; return; }
+  const { ds, map } = pontosNaPartida(u);
+  const ps = [...map.values()];
+  if (!ps.length) return;
+  const label = u.fila === 'flex' ? (f) => f.tipo : (f) => `${f.modo} · ${f.mapa}`;
+  const card = matchCard(u.id, ps, u.rows, ds, label, u.fila === 'flex' ? LINK_FLEX : () => null);
+  card.open = true;
+  box.append(card);
+});
+
+/* ================= NOVO: títulos ================= */
+dash.calc('titulos', {
+  inputs: ['placar'],
+  title: 'Títulos por partida',
+  description: 'Títulos de mérito e de zueira que cada jogador do grupo ganhou em cada partida, comparando com todos os jogadores da mesma partida.',
+  fn: (placar) => {
+    const kda = (r) => (Number(r.abates) + Number(r.assist)) / Math.max(1, Number(r.mortes));
+    const cspm = (r) => Number(r.cs) / Math.max(1, Number(r.minutos));
+    // [id, nome, tipo, ícone, descrição, regra(jogador, partida)]
+    const T = [
+      ['mvp', 'Carregou nas Costas', 'bom', '👑', 'Ficou em 1º na partida', (r) => Number(r.posicao) === 1],
+      ['penta', 'PENTAKILL', 'bom', '🖐️', 'Fez um pentakill', (r) => Number(r.multi) >= 5],
+      ['quadra', 'Quadra Kill', 'bom', '🔥', 'Fez um quadra kill', (r) => Number(r.multi) === 4],
+      ['triplo', 'Triplo Abate', 'bom', '🗡️', 'Fez um triple kill', (r) => Number(r.multi) === 3],
+      ['fb', 'Primeiro Sangue', 'bom', '🩸', 'Fez o primeiro abate da partida', (r) => Number(r.fb) === 1],
+      ['canhao', 'Canhão', 'bom', '💥', 'Mais dano a campeões da partida', (r, m) => Number(r.dano) === m.max('dano')],
+      ['muralha', 'Muralha', 'bom', '🧱', 'Mais dano recebido da partida', (r, m) => Number(r.dano_recebido) === m.max('dano_recebido')],
+      ['sauron', 'Olho de Sauron', 'bom', '👁️', 'Maior placar de visão da partida', (r, m) => r.fila === 'flex' && Number(r.visao) > 0 && Number(r.visao) === m.max('visao')],
+      ['fazendeiro', 'Fazendeiro', 'bom', '🌾', 'Mais farm por minuto da partida', (r, m) => r.fila === 'flex' && cspm(r) === m.maxF(cspm)],
+      ['baba', 'Babá do Time', 'bom', '🍼', 'Mais assistências da partida (10 ou mais)', (r, m) => Number(r.assist) >= 10 && Number(r.assist) === m.max('assist')],
+      ['imortal', 'Imortal', 'bom', '😇', 'Não morreu nenhuma vez (partida de 15 min ou mais)', (r) => Number(r.mortes) === 0 && Number(r.minutos) >= 15],
+      ['demolidor', 'Demolidor', 'bom', '🏚️', 'Derrubou 3 torres ou mais', (r) => Number(r.torres) >= 3],
+      ['freezer', 'Freezer', 'bom', '🧊', 'Mais tempo de controle de grupo da partida', (r, m) => Number(r.cc) > 0 && Number(r.cc) === m.max('cc')],
+      ['lanterna', 'Lanterninha', 'ruim', '🔦', 'Ficou em último na partida', (r) => Number(r.posicao) === Number(r.jogadores)],
+      ['saco', 'Saco de Pancada', 'ruim', '🥊', 'Mais mortes da partida', (r, m) => Number(r.mortes) > 0 && Number(r.mortes) === m.max('mortes')],
+      ['doador', 'Doador Oficial', 'ruim', '🎁', 'Morreu 10 vezes ou mais na flex (15 na personalizada)', (r) => Number(r.mortes) >= (r.fila === 'flex' ? 10 : 15)],
+      ['bronze', 'KDA de Bronze', 'ruim', '🥉', 'KDA abaixo de 1', (r) => kda(r) < 1],
+      ['turista', 'Turista', 'ruim', '📸', 'Participou de menos de 30% dos abates do time', (r, m) => m.teamKills(r.time) >= 10 && Number(r.kp) < 30],
+      ['pacifista', 'Pacifista', 'ruim', '🕊️', 'Menos dano a campeões da partida', (r, m) => Number(r.dano) === m.min('dano')],
+      ['mendigo', 'Mendigo', 'ruim', '🪙', 'Flex: menos de 70% do ouro do rival da mesma rota. Personalizada: menos ouro da partida e menos de 40% de participação em abates',
+        (r, m) => { if (r.fila === 'flex') { const o = m.rival(r); return !!o && Number(r.ouro) < 0.7 * Number(o.ouro); } return Number(r.ouro) === m.min('ouro') && Number(r.kp) < 40; }],
+      ['cego', 'Cego', 'ruim', '🦯', 'Menor placar de visão da partida', (r, m) => r.fila === 'flex' && Number(r.visao) === m.min('visao')],
+      ['ladrao', 'Ladrão de Kill', 'ruim', '🦝', '8 abates ou mais e menos da metade disso em assistências', (r) => Number(r.abates) >= 8 && Number(r.abates) > 2 * Number(r.assist)],
+    ];
+    const byMatch = new Map();
+    for (const r of placar) { const k = String(r.partida); if (!byMatch.has(k)) byMatch.set(k, []); byMatch.get(k).push(r); }
+    const out = [];
+    for (const [partida, rows] of byMatch) {
+      const m = {
+        max: (f) => Math.max(...rows.map((x) => Number(x[f]))),
+        min: (f) => Math.min(...rows.map((x) => Number(x[f]))),
+        maxF: (fn) => Math.max(...rows.map(fn)),
+        teamKills: (time) => rows.filter((x) => x.time === time).reduce((t, x) => t + Number(x.abates), 0),
+        rival: (r) => rows.find((x) => x.time !== r.time && x.role && x.role === r.role),
+      };
+      for (const r of rows) {
+        if (!r.grupo) continue;
+        for (const [id, nome, tipo, icone, descricao, test] of T) {
+          if (test(r, m)) out.push({ partida, fila: r.fila, semana: r.semana, dia: r.dia, inicio: r.inicio, jogador: r.grupo, campeao_id: r.campeao_id,
+            posicao: r.posicao, jogadores: r.jogadores, titulo_id: id, titulo: nome, tipo, icone, descricao });
+        }
+      }
+    }
+    return out;
+  },
+});
+
+dash.calc('titulos_contagem', {
+  inputs: ['titulos', 'premios'],
+  title: 'Coleção de títulos',
+  description: 'Quantas vezes cada jogador ganhou cada título, por tipo de partida. Inclui os títulos de award: quem leva um award na semana ganha o título correspondente (o Pior campeão vai para quem jogou com ele; a Pior rota não dá título).',
+  fn: (titulos, premios) => {
+    const AW = {
+      melhor: ['Melhor da Semana', 'bom', '🏆', 'Award: melhor colocação média da semana'],
+      dano: ['Rei do Dano', 'bom', '👊', 'Award: mais dano por partida na semana'],
+      assist: ['Garçom da Semana', 'bom', '🍽️', 'Award: mais assistências por partida na semana'],
+      olho: ['Farol da Semana', 'bom', '🔭', 'Award: mais visão por minuto na semana'],
+      abates: ['Matador da Semana', 'bom', '🔪', 'Award: mais abates por partida na semana'],
+      pior_campeao: ['Campeão Amaldiçoado', 'ruim', '🧿', 'Award: jogou o pior campeão da semana'],
+      mortes: ['Feeder da Semana', 'ruim', '🍖', 'Award: mais mortes por partida na semana'],
+      visao: ['Cego da Semana', 'ruim', '🦇', 'Award: menos visão por minuto na semana'],
+      pacifista: ['Pacifista da Semana', 'ruim', '☮️', 'Award: menos dano por partida na semana'],
+      turista: ['Turista da Semana', 'ruim', '🧳', 'Award: menor participação em abates na semana'],
+    };
+    const m = new Map();
+    const conta = (fila, jogador, id, titulo, tipo, icone, descricao) => {
+      const k = fila + '|' + jogador + '|' + id;
+      if (!m.has(k)) m.set(k, { fila, jogador, titulo_id: id, titulo, tipo, icone, descricao, award: id.startsWith('aw_') ? 1 : 0, vezes: 0 });
+      m.get(k).vezes += 1;
+    };
+    for (const t of titulos) conta(t.fila, t.jogador, t.titulo_id, t.titulo, t.tipo, t.icone, t.descricao);
+    for (const p of premios) {
+      const d = AW[p.premio];
+      if (!d) continue;
+      for (const j of String(p.jogador).split(', ')) conta(p.fila, j, 'aw_' + p.premio, d[0], d[1], d[2], d[3]);
+    }
+    return [...m.values()];
+  },
+});
+
+function badge(t, extra) {
+  const b = el('span', 'bdg ' + (t.tipo === 'bom' ? 'bom' : 'ruim') + (Number(t.award) ? ' award' : ''));
+  b.title = t.descricao;
+  const ic = el('span', 'ic', t.icone); ic.setAttribute('aria-hidden', 'true');
+  b.append(ic, el('span', null, t.titulo));
+  if (extra) b.append(extra);
+  return b;
+}
+function posChip(pos, n) {
+  const c = el('span', 'bdg pos ' + badgeClass(Number(pos), Number(n)), `${pos}º`);
+  return c;
+}
+function titulosDe(partida, jogador) {
+  const g = dash.data('titulos');
+  if (g.status !== 'ok' || !g.data) return [];
+  return g.data.filter((t) => String(t.partida) === String(partida) && t.jogador === jogador)
+    .sort((a, b) => (a.tipo === b.tipo ? 0 : a.tipo === 'ruim' ? -1 : 1));
+}
+
+dash.draw('perfil-titulos', (box) => {
+  const g = dash.data('titulos_contagem'); const j = jogadorAtual();
+  box.replaceChildren();
+  if (g.status !== 'ok' || !g.data || !j) { box.textContent = '—'; return; }
+  const rs = g.data.filter((r) => r.jogador === j && r.fila === window.mvp.fila)
+    .sort((a, b) => (a.tipo === b.tipo ? (b.award - a.award) || (b.vezes - a.vezes) : a.tipo === 'ruim' ? -1 : 1));
+  if (!rs.length) { box.append(el('span', 'muted', 'Nenhum título ainda.')); return; }
+  for (const r of rs) {
+    const n = el('span', 'n', `×${r.vezes}`);
+    n.dataset.source = 'titulos_contagem'; n.dataset.field = 'vezes';
+    n.dataset.where = `fila=${enc(r.fila)}&jogador=${enc(r.jogador)}&titulo_id=${enc(r.titulo_id)}`;
+    box.append(badge(r, n));
+  }
+});
+
+dash.draw('perfil-titulos-partidas', (box) => {
+  const g = dash.data('titulos'); const pl = dash.data('placar'); const j = jogadorAtual();
+  box.replaceChildren();
+  if (g.status !== 'ok' || pl.status !== 'ok' || !g.data || !j) { box.textContent = '—'; return; }
+  const jogos = pl.data.filter((r) => r.grupo === j && r.fila === window.mvp.fila)
+    .sort((a, b) => (a.inicio < b.inicio ? 1 : -1)).slice(0, 10);
+  if (!jogos.length) { box.append(el('div', 'empty', 'Nenhuma partida.')); return; }
+  for (const r of jogos) {
+    const row = el('div', 'trow');
+    const left = el('div', 'tl-l'); left.append(icon(r.campeao_id));
+    const info = el('div');
+    info.append(el('b', null, champName(r.campeao_id)), el('small', null, `${dia(r.dia)} · ${r.abates}/${r.mortes}/${r.assist} · ${Number(r.vitoria) ? 'vitória' : 'derrota'}`));
+    left.append(info);
+    const bs = el('div', 'badges');
+    bs.append(posChip(r.posicao, r.jogadores));
+    const ts = titulosDe(r.partida, j);
+    ts.forEach((t) => bs.append(badge(t)));
+    if (!ts.length) bs.append(el('span', 'muted', 'sem títulos'));
+    row.append(left, bs);
+    box.append(row);
+  }
+});
+
+/* ================= NOVO: títulos nos cartões do pior e do MVP ================= */
+const AW_TITULOS = {
+  melhor: ['Melhor da Semana', 'bom', '🏆', 'Award: melhor colocação média da semana'],
+  dano: ['Rei do Dano', 'bom', '👊', 'Award: mais dano por partida na semana'],
+  assist: ['Garçom da Semana', 'bom', '🍽️', 'Award: mais assistências por partida na semana'],
+  olho: ['Farol da Semana', 'bom', '🔭', 'Award: mais visão por minuto na semana'],
+  abates: ['Matador da Semana', 'bom', '🔪', 'Award: mais abates por partida na semana'],
+  pior_campeao: ['Campeão Amaldiçoado', 'ruim', '🧿', 'Award: jogou o pior campeão da semana'],
+  mortes: ['Feeder da Semana', 'ruim', '🍖', 'Award: mais mortes por partida na semana'],
+  visao: ['Cego da Semana', 'ruim', '🦇', 'Award: menos visão por minuto na semana'],
+  pacifista: ['Pacifista da Semana', 'ruim', '☮️', 'Award: menos dano por partida na semana'],
+  turista: ['Turista da Semana', 'ruim', '🧳', 'Award: menor participação em abates na semana'],
+};
+function titulosDaSemana(jogador, semana, fila, tipo, limite) {
+  const out = [];
+  const pr = dash.data('premios');
+  if (pr.status === 'ok' && pr.data) {
+    for (const p of pr.data) {
+      const d = AW_TITULOS[p.premio];
+      if (!d || d[1] !== tipo || p.semana !== semana || p.fila !== fila) continue;
+      if (!String(p.jogador).split(', ').includes(jogador)) continue;
+      out.push({ t: { titulo: d[0], tipo: d[1], icone: d[2], descricao: d[3], award: 1 }, n: 1 });
+    }
+  }
+  const tg = dash.data('titulos');
+  if (tg.status === 'ok' && tg.data) {
+    const m = new Map();
+    for (const t of tg.data) {
+      if (t.jogador !== jogador || t.semana !== semana || t.fila !== fila || t.tipo !== tipo) continue;
+      if (!m.has(t.titulo_id)) m.set(t.titulo_id, { t, n: 0 });
+      m.get(t.titulo_id).n += 1;
+    }
+    out.push(...[...m.values()].sort((a, b) => b.n - a.n));
+  }
+  return out.slice(0, limite);
+}
+function spotTitulos(name, pick, tipo) {
+  dash.draw(name, (box) => {
+    box.replaceChildren();
+    const s = rankingDaSemana('ranking');
+    if (!s || !s.rows.length) return;
+    const r = pick(s.rows);
+    if (!r) return;
+    for (const { t, n } of titulosDaSemana(r.jogador, s.w, 'flex', tipo, 4)) {
+      box.append(badge(t, n > 1 ? el('span', 'n', `×${n}`) : null));
+    }
+  });
+}
+spotTitulos('spot-flex-worst-titulos', (rows) => rows[0], 'ruim');
+spotTitulos('spot-flex-best-titulos', (rows) => rows.filter((r) => r.mvps > 0).sort((a, b) => b.mvps - a.mvps || a.nota - b.nota || a.partidas - b.partidas)[0] || null, 'bom');
+
+/* ================= NOVO: por que ficaram lá embaixo ================= */
+function motivos(r, rows) {
+  const n = rows.length;
+  const num = (x) => Number(x);
+  const kda = (x) => (num(x.abates) + num(x.assist)) / Math.max(1, num(x.mortes));
+  const rankDesc = (f) => 1 + rows.filter((x) => f(x) > f(r)).length; // 1 = maior
+  const rankAsc = (f) => 1 + rows.filter((x) => f(x) < f(r)).length;  // 1 = menor
+  const out = []; // [peso, texto]
+  const rm = rankDesc((x) => num(x.mortes));
+  if (rm <= 3 && num(r.mortes) >= 5) out.push([4 - rm + num(r.mortes) / 4, `morreu ${r.mortes} vezes${rm === 1 ? ', mais que todo mundo na partida' : ` (${rm}ª maior marca da partida)`}`]);
+  const k = kda(r);
+  if (k < 1.5) out.push([3 - k, `KDA de ${fmt2(k)} (${r.abates}/${r.mortes}/${r.assist})`]);
+  const rd = rankAsc((x) => num(x.dano));
+  if (rd <= Math.ceil(n * 0.3)) out.push([3.2 - rd * 0.4, `só ${fmtK(r.dano)} de dano a campeões${rd === 1 ? ', o menor da partida' : ` (${rd}º menor da partida)`}`]);
+  if (num(r.kp) < 45) out.push([(45 - num(r.kp)) / 8, `participou de só ${r.kp}% dos abates do time`]);
+  if (r.fila === 'flex') {
+    const riv = rows.find((x) => x.time !== r.time && x.role && x.role === r.role);
+    if (riv && num(r.ouro) < 0.85 * num(riv.ouro)) out.push([(1 - num(r.ouro) / num(riv.ouro)) * 8, `perdeu a rota: ${fmtK(r.ouro)} de ouro contra ${fmtK(riv.ouro)} do rival (${champName(riv.campeao_id)})`]);
+    const rv = rankAsc((x) => num(x.visao) / Math.max(1, num(x.minutos)));
+    if (rv <= 2) out.push([1.5, `visão baixa: placar de ${r.visao}${rv === 1 ? ', o menor da partida' : ''}`]);
+    const ally = rows.filter((x) => x.time === r.time && x.role !== 'SUP' && x.role !== '');
+    if (r.role !== 'SUP' && ally.length) {
+      const cspm = num(r.cs) / Math.max(1, num(r.minutos));
+      const rc = 1 + ally.filter((x) => num(x.cs) / Math.max(1, num(x.minutos)) < cspm).length;
+      if (rc === 1 && cspm < 5.5) out.push([1.2, `farm fraco: ${fmt1(cspm)} CS por minuto`]);
+    }
+  } else {
+    const ro = rankAsc((x) => num(x.ouro));
+    if (ro === 1) out.push([1.4, `menor ouro da partida (${fmtK(r.ouro)})`]);
+  }
+  if (!Number(r.vitoria)) out.push([0.6, 'e o time perdeu, o que também pesa na nota']);
+  out.sort((a, b) => b[0] - a[0]);
+  const top = out.slice(0, 4).map((x) => x[1]);
+  if (!top.length) top.push('ficou atrás dos outros na soma geral dos números, sem nenhum ponto muito ruim isolado');
+  return top;
+}
+dash.draw('ultima-motivos', (box) => {
+  const u = ultimaPartida();
+  box.replaceChildren();
+  if (!u) return;
+  const { map } = pontosNaPartida(u);
+  const piores = u.rows.filter((r) => r.grupo && Number((map.get(r.grupo) || {}).pontos) > 0).sort((a, b) => b.posicao - a.posicao);
+  if (!piores.length) { box.hidden = true; return; }
+  box.hidden = false;
+  box.append(el('div', 'why-h', 'Por que ficaram lá embaixo'));
+  const grid = el('div', 'why-grid');
+  for (const r of piores) {
+    const c = el('div', 'why');
+    const h = el('div', 'why-t'); h.append(icon(r.campeao_id));
+    const nm = el('div'); nm.append(el('b', null, r.grupo), el('small', null, `${r.posicao}º de ${r.jogadores} · ${champName(r.campeao_id)}`));
+    h.append(nm); c.append(h);
+    const ul = el('ul');
+    motivos(r, u.rows).forEach((t) => ul.append(el('li', null, t)));
+    c.append(ul); grid.append(c);
+  }
+  box.append(grid);
+});
+</script>
