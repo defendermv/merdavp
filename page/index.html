@@ -550,6 +550,22 @@
 .mvp .btn.vermais { font-size: 12px; padding: 7px 18px; }
 .mvp table.rank td small.muted { font-size: 11px; }
 .mvp table.rank td.l b { white-space: normal; }
+
+/* campeões em duas colunas e times com fotos */
+.mvp table.rank th.hd-good { color: var(--lime); }
+.mvp table.rank th.hd-bad { color: var(--red); }
+.mvp .vermais-wrap { display: flex; justify-content: center; margin-top: 10px; }
+.mvp .vermais-wrap:empty { display: none; }
+.mvp .tchips { display: flex; flex-wrap: wrap; gap: 6px 8px; }
+.mvp .tchip { display: grid; justify-items: center; gap: 3px; width: 58px; }
+.mvp .tchip img, .mvp .tchip .ph { width: 34px; height: 34px; clip-path: var(--cut-s); background: var(--panel2); }
+.mvp .tchip span { font-size: 10px; line-height: 1.15; color: #c9d1db; font-weight: 600; max-width: 58px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mvp table.rank tr.better .tchip img { outline: 2px solid rgba(133,253,5,.55); outline-offset: 1px; }
+.mvp table.rank tr.worse .tchip img { outline: 2px solid rgba(232,89,79,.55); outline-offset: 1px; }
+.mvp .tchips { flex-wrap: nowrap; gap: 4px; }
+.mvp .tchip { width: 48px; }
+.mvp .tchip img, .mvp .tchip .ph { width: 30px; height: 30px; }
+.mvp .tchip span { max-width: 48px; font-size: 9.5px; }
 </style>
 
 <div class="mvp" lang="pt-BR" data-read>
@@ -800,27 +816,41 @@
         <div class="sec-title"><h2>Recordes</h2><span class="muted">A melhor (ou pior) marca numa única partida.</span></div>
         <div class="records" data-draw="recordes" data-source="recordes"></div>
       </div>
-      <div class="two">
-        <div>
-          <div class="sec-title"><h2>Campeões do grupo</h2><span class="muted">2 jogos ou mais. Os 5 abençoados e os 5 malditos.</span></div>
+      <div>
+        <div class="sec-title"><h2>Campeões do grupo</h2><span class="muted">2 jogos ou mais, por colocação média. Os 5 abençoados e os 5 malditos.</span></div>
+        <div class="two">
           <div class="card tablewrap">
             <table class="rank" data-source="campeoes_grupo" data-row-key="fila,campeao_id">
               <thead><tr>
-                <th class="l">Campeão</th>
+                <th class="l hd-good">Abençoados</th>
                 <th data-field="jogos">Jogos</th>
                 <th data-field="win_pct">Vitórias</th>
                 <th class="r" data-field="col_media">Col. média</th>
               </tr></thead>
-              <tbody data-draw="campeoes-grupo"></tbody>
+              <tbody data-draw="campeoes-bons"></tbody>
+            </table>
+          </div>
+          <div class="card tablewrap">
+            <table class="rank" data-source="campeoes_grupo" data-row-key="fila,campeao_id">
+              <thead><tr>
+                <th class="l hd-bad">Malditos</th>
+                <th data-field="jogos">Jogos</th>
+                <th data-field="win_pct">Vitórias</th>
+                <th class="r" data-field="col_media">Col. média</th>
+              </tr></thead>
+              <tbody data-draw="campeoes-ruins"></tbody>
             </table>
           </div>
         </div>
+        <div class="vermais-wrap" data-draw="campeoes-mais"></div>
+      </div>
+      <div class="two">
         <div>
           <div class="sec-title"><h2>Trios ARAM</h2><span class="muted">Três do grupo no mesmo time nas personalizadas, 2 jogos ou mais.</span></div>
           <div class="card tablewrap">
             <table class="rank" data-source="trios" data-row-key="trio">
               <thead><tr>
-                <th class="l" data-field="trio">Trio</th>
+                <th class="l ">Trio</th>
                 <th data-field="jogos">Jogos</th>
                 <th data-field="win_pct">Vitórias</th>
                 <th class="r" data-field="col_media">Col. média</th>
@@ -829,19 +859,19 @@
             </table>
           </div>
         </div>
-      </div>
-      <div>
-        <div class="sec-title"><h2>Times Flex</h2><span class="muted">Quem do grupo jogou junto no mesmo time na flex, 2 jogos ou mais. Ordem: % de vitórias, depois colocação média.</span></div>
-        <div class="card tablewrap">
-          <table class="rank" data-source="times_flex" data-row-key="time">
-            <thead><tr>
-              <th class="l" data-field="time">Time</th>
-              <th data-field="jogos">Jogos</th>
-              <th data-field="win_pct">Vitórias</th>
-              <th class="r" data-field="col_media">Col. média</th>
-            </tr></thead>
-            <tbody data-draw="times-flex"></tbody>
-          </table>
+        <div>
+          <div class="sec-title"><h2>Times Flex</h2><span class="muted">Quem do grupo jogou junto na flex, 2 jogos ou mais.</span></div>
+          <div class="card tablewrap">
+            <table class="rank" data-source="times_flex" data-row-key="time">
+              <thead><tr>
+                <th class="l ">Time</th>
+                <th data-field="jogos">Jogos</th>
+                <th data-field="win_pct">Vitórias</th>
+                <th class="r" data-field="col_media">Col. média</th>
+              </tr></thead>
+              <tbody data-draw="times-flex"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
@@ -1094,7 +1124,7 @@ const PANEL_DRAWS = {
   flex: ['spot-flex-worst-img', 'spot-flex-worst-tag', 'spot-flex-worst-who', 'spot-flex-worst-facts', 'spot-flex-best-img', 'spot-flex-best-who', 'spot-flex-best-facts', 'spot-flex-worst-titulos', 'spot-flex-best-titulos', 'premios-flex', 'tabela-flex', 'partidas-flex'],
   custom: ['spot-custom-worst-img', 'spot-custom-worst-who', 'spot-custom-worst-facts', 'spot-custom-best-img', 'spot-custom-best-who', 'spot-custom-best-facts', 'premios-custom', 'tabela-custom', 'partidas-custom'],
   jogadores: ['jog-picker', 'perfil-img', 'perfil-nome', 'perfil-tiles', 'perfil-titulos', 'perfil-titulos-partidas', 'perfil-streak', 'perfil-campeoes'],
-  estatisticas: ['recordes', 'campeoes-grupo', 'trios', 'times-flex'],
+  estatisticas: ['recordes', 'campeoes-bons', 'campeoes-ruins', 'campeoes-mais', 'trios', 'times-flex'],
   galeria: ['historico', 'contagem', 'historico-custom'],
   sorteio: ['sorteio-jogadores', 'sorteio-status', 'sorteio-resultado'],
   regras: [],
@@ -2195,8 +2225,9 @@ function agregaTimes(placar, fila, chaves) {
     const ps = rs.slice().sort((a, b) => (a.grupo < b.grupo ? -1 : 1));
     for (const combo of chaves(ps)) {
       const key = combo.map((p) => p.grupo).join(' + ');
-      if (!m.has(key)) m.set(key, { jogos: 0, vitorias: 0, pos: 0, n: combo.length });
+      if (!m.has(key)) m.set(key, { jogos: 0, vitorias: 0, pos: 0, n: combo.length, champs: {} });
       const s = m.get(key);
+      for (const p of combo) { const c = (s.champs[p.grupo] = s.champs[p.grupo] || {}); c[p.campeao_id] = (c[p.campeao_id] || 0) + 1; }
       s.jogos += 1; s.vitorias += Number(combo[0].vitoria);
       s.pos += combo.reduce((t, p) => t + Number(p.posicao), 0) / combo.length;
     }
@@ -2211,7 +2242,7 @@ dash.calc('trios', {
     const out = [];
     for (const [trio, s] of agregaTimes(placar, 'personalizada', (ps) => combinacoes(ps, 3))) {
       if (s.jogos < 2) continue;
-      out.push({ trio, jogos: s.jogos, win_pct: Math.round((100 * s.vitorias) / s.jogos), col_media: Math.round((s.pos / s.jogos) * 10) / 10 });
+      out.push({ trio, membros: Object.entries(s.champs).map(([nome, cs]) => ({ nome, campeao_id: Number(Object.entries(cs).sort((a, b) => b[1] - a[1])[0][0]) })), jogos: s.jogos, win_pct: Math.round((100 * s.vitorias) / s.jogos), col_media: Math.round((s.pos / s.jogos) * 10) / 10 });
     }
     return out;
   },
@@ -2224,7 +2255,7 @@ dash.calc('times_flex', {
     const out = [];
     for (const [time, s] of agregaTimes(placar, 'flex', (ps) => [ps])) {
       if (s.jogos < 2) continue;
-      out.push({ time, integrantes: s.n, jogos: s.jogos, win_pct: Math.round((100 * s.vitorias) / s.jogos), col_media: Math.round((s.pos / s.jogos) * 10) / 10 });
+      out.push({ time, integrantes: s.n, membros: Object.entries(s.champs).map(([nome, cs]) => ({ nome, campeao_id: Number(Object.entries(cs).sort((a, b) => b[1] - a[1])[0][0]) })), jogos: s.jogos, win_pct: Math.round((100 * s.vitorias) / s.jogos), col_media: Math.round((s.pos / s.jogos) * 10) / 10 });
     }
     return out;
   },
@@ -2281,5 +2312,77 @@ dash.draw('times-flex', (tb) => {
   const rs = g.data.slice().sort(ordemTimes);
   if (!rs.length) { const tr = el('tr'); const td = el('td', 'l muted', 'Nenhum time com 2 jogos.'); td.colSpan = 4; tr.append(td); tb.append(tr); return; }
   listaTopo(tb, 'times-flex', rs, 3, linhaTime('time'), 4, ['Melhores times', 'Piores times']);
+});
+
+/* ================= NOVO: campeões em duas colunas e times com fotos ================= */
+function campeoesOrdenados() {
+  const g = dash.data('campeoes_grupo');
+  if (g.status !== 'ok' || !g.data) return null;
+  return g.data.filter((r) => r.fila === window.mvp.fila).sort((a, b) => a.col_media - b.col_media || b.win_pct - a.win_pct || b.jogos - a.jogos);
+}
+function linhaCampeao(r, tag) {
+  const tr = el('tr'); tr.dataset.key = `${enc(r.fila)},${enc(r.campeao_id)}`;
+  const td = champCell(r.campeao_id, r.quem);
+  const v = el('td', tag === 'good' ? 'ok' : 'ko', `${r.win_pct}%`);
+  tr.append(td, el('td', null, String(r.jogos)), v, el('td', 'r', fmt1(r.col_media) + 'º'));
+  return tr;
+}
+function desenhaCampeoes(tb, lado) {
+  tb.replaceChildren();
+  const rs = campeoesOrdenados();
+  if (!rs) return;
+  if (!rs.length) { const tr = el('tr'); const td = el('td', 'l muted', 'Nenhum campeão com 2 jogos.'); td.colSpan = 4; tr.append(td); tb.append(tr); return; }
+  const metade = Math.ceil(rs.length / 2);
+  const lista = lado === 'bons' ? rs.slice(0, metade) : rs.slice(metade).reverse();
+  const n = window.mvp.vermais['campeoes'] ? lista.length : Math.min(5, lista.length);
+  lista.slice(0, n).forEach((r) => tb.append(linhaCampeao(r, lado === 'bons' ? 'good' : 'bad')));
+}
+dash.draw('campeoes-bons', (tb) => desenhaCampeoes(tb, 'bons'));
+dash.draw('campeoes-ruins', (tb) => desenhaCampeoes(tb, 'ruins'));
+dash.draw('campeoes-mais', (box) => {
+  box.replaceChildren();
+  const rs = campeoesOrdenados();
+  if (!rs || rs.length <= 10) return;
+  const aberto = !!window.mvp.vermais['campeoes'];
+  const b = el('button', 'btn vermais', aberto ? 'Ver menos' : `Ver mais (${rs.length - 10})`); b.type = 'button';
+  b.onclick = () => { window.mvp.vermais['campeoes'] = !aberto; ['campeoes-bons', 'campeoes-ruins', 'campeoes-mais'].forEach((x) => dash.draw(x)); };
+  box.append(b);
+});
+
+function chipsTime(membros) {
+  const box = el('div', 'tchips');
+  for (const m of membros) {
+    const c = el('div', 'tchip');
+    c.title = `${m.nome} · ${champName(m.campeao_id)}`;
+    c.append(icon(m.campeao_id), el('span', null, m.nome));
+    box.append(c);
+  }
+  return box;
+}
+function linhaTimeFotos(campo) {
+  return (r, tag) => {
+    const tr = el('tr', tag === 'bad' ? 'worse' : tag === 'good' ? 'better' : null);
+    tr.dataset.key = enc(r[campo]);
+    const td = el('td', 'l'); td.append(chipsTime(r.membros || r[campo].split(' + ').map((nome) => ({ nome, campeao_id: null }))));
+    const v = el('td', tag === 'good' ? 'ok' : tag === 'bad' ? 'ko' : null, `${r.win_pct}%`);
+    tr.append(td, el('td', null, String(r.jogos)), v, el('td', 'r', fmt1(r.col_media) + 'º'));
+    return tr;
+  };
+}
+dash.draw('trios', (tb) => {
+  const g = dash.data('trios');
+  tb.replaceChildren();
+  if (g.status !== 'ok' || !g.data) return;
+  const rs = g.data.slice().sort(ordemTimes);
+  if (!rs.length) { const tr = el('tr'); const td = el('td', 'l muted', 'Nenhum trio com 2 jogos.'); td.colSpan = 4; tr.append(td); tb.append(tr); return; }
+  listaTopo(tb, 'trios', rs, 3, linhaTimeFotos('trio'), 4, ['Melhores trios', 'Piores trios']);
+});
+dash.draw('times-flex', (tb) => {
+  const g = dash.data('times_flex');
+  tb.replaceChildren();
+  if (g.status !== 'ok' || !g.data) return;
+  const rs = g.data.slice().sort(ordemTimes);
+  if (!rs.length) { const tr = el('tr'); const td = el('td', 'l muted', 'Nenhum time com 2 jogos.'); td.colSpan = 4; tr.append(td); tb.append(tr); return; }
+  listaTopo(tb, 'times-flex', rs, 3, linhaTimeFotos('time'), 4, ['Melhores times', 'Piores times']);
 });
 </script>
