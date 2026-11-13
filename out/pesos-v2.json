@@ -1,0 +1,20 @@
+{
+ "kda": 0.8,
+ "kp": 0.79,
+ "dmg": 0.59,
+ "taken": 0.15,
+ "gold": 0.17,
+ "cs": 0.11,
+ "vision": 0.31,
+ "deaths": -1.4,
+ "win": 0.6,
+ "lane_gold": 0.11,
+ "lane_cs": 0.08,
+ "lane_dmg": 0.2,
+ "lane_vision": 0.0,
+ "obj": 0.07,
+ "takedowns": 0.03,
+ "early_gold": 0.17,
+ "early_xp": 0.22,
+ "early_cs": 0.22
+}

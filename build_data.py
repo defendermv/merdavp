@@ -13,7 +13,7 @@ Regras (planilha MerdaVP):
 """
 import json, datetime as dt
 from pathlib import Path
-from score import scores, scores_aram
+from score import scores, scores_aram, pesos_para
 
 HERE = Path(__file__).parent
 OUT = HERE / "out"
@@ -59,7 +59,10 @@ def flex(m):
     start, day, week = quando(info["gameStartTimestamp"])
     if day.isoformat() < CFG["inicio"]:
         return [], []
-    sc = scores(m)
+    tl = HERE / "matches" / "timeline" / f'{m["metadata"]["matchId"]}.json'
+    if tl.exists():
+        m["_tl"] = json.loads(tl.read_text(encoding="utf-8"))
+    sc = scores(m, pesos_para(day.isoformat()))
     rank = {k: i + 1 for i, k in enumerate(sorted(sc, key=lambda k: -sc[k]))}
     mid, mins = m["metadata"]["matchId"], round(info["gameDuration"] / 60, 1)
     rows, placar = [], []
