@@ -30,11 +30,14 @@ gh repo clone defendermv/merdavp "$HOME\MerdaVP"
 ```
 powershell -ExecutionPolicy Bypass -File "$HOME\MerdaVP\instalar_amigo.ps1"
 ```
-Ele cria o coletor automático e o atalho **"Atualizar ARAM"** na área de trabalho.
+Ele cria o coletor automático e os atalhos **"Atualizar ARAM"** e **"Atualizar Flex"** na área de trabalho e no Menu Iniciar.
+
+**Já tinha instalado antes?** Rode só o comando acima de novo para ganhar o atalho "Atualizar Flex".
 
 ## Pronto! Como usar
-- **Automático:** com o cliente do LoL aberto, a cada 10 minutos as personalizadas novas vão para o site sozinhas.
-- **Na hora:** depois da partida, clique em **Atualizar ARAM**. Aparece uma mensagem dizendo quantas partidas foram enviadas.
+- **Automático:** com o cliente do LoL aberto, a cada 10 minutos as personalizadas novas vão para o site sozinhas. As flex o site busca sozinho a cada 10 minutos.
+- **Na hora (personalizada):** depois da partida, clique em **Atualizar ARAM**. Aparece uma mensagem dizendo quantas partidas foram enviadas.
+- **Na hora (flex):** clique em **Atualizar Flex**. Ele pede ao GitHub para buscar as flex novas e mostra quantas entraram (leva uns 30 a 60 segundos e não precisa do cliente aberto).
 - Se a mesma partida for enviada por duas pessoas, ela entra só uma vez.
-- Para desinstalar: apague a pasta `MerdaVP`, o atalho, e no PowerShell rode
+- Para desinstalar: apague a pasta `MerdaVP`, os atalhos, e no PowerShell rode
   `Unregister-ScheduledTask -TaskName 'MerdaVP - coletor de personalizadas'`

@@ -51,17 +51,24 @@ Register-ScheduledTask -TaskName 'MerdaVP - coletor de personalizadas' `
   -Action $action -Trigger $trigger -Settings $settings -Force | Out-Null
 Write-Host "Coletor automático instalado (a cada 10 minutos)."
 
-# Atalho "Atualizar ARAM" na área de trabalho e no Menu Iniciar
+# Atalhos "Atualizar ARAM" e "Atualizar Flex" na área de trabalho e no Menu Iniciar
 $ws = New-Object -ComObject WScript.Shell
+$atalhos = @(
+  @{ Nome = 'Atualizar ARAM'; Script = 'atualizar_aram.py'; Desc = 'Envia as personalizadas novas do LoL para o site do MerdaVP' },
+  @{ Nome = 'Atualizar Flex'; Script = 'atualizar_flex.py'; Desc = 'Busca as flex novas e atualiza o site do MerdaVP' }
+)
 foreach ($pasta in @([Environment]::GetFolderPath('Desktop'), (Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs'))) {
-  $lnk = $ws.CreateShortcut((Join-Path $pasta 'Atualizar ARAM.lnk'))
-  $lnk.TargetPath = $py
-  $lnk.Arguments = "`"$app\atualizar_aram.py`""
-  $lnk.WorkingDirectory = $app
-  $lnk.IconLocation = "$app\atualizar_aram.ico,0"
-  $lnk.Description = 'Envia as personalizadas novas do LoL para o site do MerdaVP'
-  $lnk.Save()
+  foreach ($a in $atalhos) {
+    $lnk = $ws.CreateShortcut((Join-Path $pasta "$($a.Nome).lnk"))
+    $lnk.TargetPath = $py
+    $lnk.Arguments = "`"$app\$($a.Script)`""
+    $lnk.WorkingDirectory = $app
+    $lnk.IconLocation = "$app\atualizar_aram.ico,0"
+    $lnk.Description = $a.Desc
+    $lnk.Save()
+  }
 }
-Write-Host "Atalho 'Atualizar ARAM' criado na área de trabalho e no Menu Iniciar."
+Write-Host "Atalhos 'Atualizar ARAM' e 'Atualizar Flex' criados na área de trabalho e no Menu Iniciar."
 Write-Host ""
 Write-Host "Pronto! Depois de uma personalizada, deixe o cliente aberto uns minutos ou clique em 'Atualizar ARAM'." -ForegroundColor Green
+Write-Host "Depois de uma flex, clique em 'Atualizar Flex'." -ForegroundColor Green
