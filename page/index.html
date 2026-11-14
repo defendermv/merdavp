@@ -566,6 +566,26 @@
 .mvp .tchip { width: 48px; }
 .mvp .tchip img, .mvp .tchip .ph { width: 30px; height: 30px; }
 .mvp .tchip span { max-width: 48px; font-size: 9.5px; }
+
+/* recordes: quadros grandes, 3 por linha */
+.mvp .records { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 1100px) { .mvp .records { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .mvp .records { grid-template-columns: minmax(0, 1fr); } }
+.mvp .rec { padding: 18px 20px; display: grid; gap: 12px; position: relative; overflow: hidden; }
+.mvp .rec.good { background: linear-gradient(140deg, rgba(133,253,5,.10), var(--panel) 55%); }
+.mvp .rec.bad { background: linear-gradient(140deg, rgba(232,89,79,.16), var(--panel) 55%); }
+.mvp .rec-top { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; align-items: center; }
+.mvp .rec-top img, .mvp .rec-top .ph { width: 64px; height: 64px; clip-path: var(--cut-s); background: var(--panel2); }
+.mvp .rec-cat { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+.mvp .rec.good .rec-cat { color: var(--lime); } .mvp .rec.bad .rec-cat { color: var(--red); }
+.mvp .rec-nome { font-family: var(--hero); font-size: 24px; line-height: 1.05; text-transform: uppercase; color: #fff; margin-top: 2px; }
+.mvp .rec-who { font-family: var(--display); font-weight: 700; font-size: 15px; color: #c9d1db; margin-top: 2px; }
+.mvp .rec-val { font-family: var(--display); font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }
+.mvp .rec-val b { font-family: var(--hero); font-weight: 400; font-size: 30px; line-height: 1; }
+.mvp .rec.good .rec-val b { color: var(--lime); } .mvp .rec.bad .rec-val b { color: #ff8a80; }
+.mvp .rec-pe { font-size: 12px; color: var(--dim); margin-top: -6px; }
+/* descrição embaixo do título em Trios ARAM e Times Flex */
+.mvp #estatisticas .two .sec-title { flex-direction: column; align-items: flex-start; gap: 6px; }
 </style>
 
 <div class="mvp" lang="pt-BR" data-read>
@@ -1556,22 +1576,29 @@ dash.calc('duplas', {
 dash.calc('recordes', {
   inputs: ['placar'],
   title: 'Recordes',
-  description: 'Por tipo de partida, a maior marca de um jogador do grupo numa única partida: abates, mortes, assistências, dano, melhor e pior KDA.',
+  description: 'Por tipo de partida, a maior (ou pior) marca de um jogador do grupo numa única partida: mortes, pior KDA, abates, assistências, dano, melhor KDA, dano recebido, ouro e visão (flex) ou controle de grupo (personalizadas).',
   fn: (placar) => {
+    const kda = (r) => (Number(r.abates) + Number(r.assist)) / Math.max(1, Number(r.mortes));
+    // [id, categoria, apelido, valor, direção, unidade, ruim, só nesta fila]
     const defs = [
-      ['abates', 'Mais abates', (r) => Number(r.abates), 1],
-      ['mortes', 'Mais mortes', (r) => Number(r.mortes), 1],
-      ['assist', 'Mais assistências', (r) => Number(r.assist), 1],
-      ['dano', 'Maior dano', (r) => Number(r.dano), 1],
-      ['kda', 'Melhor KDA', (r) => (Number(r.abates) + Number(r.assist)) / Math.max(1, Number(r.mortes)), 1],
-      ['pior_kda', 'Pior KDA', (r) => (Number(r.abates) + Number(r.assist)) / Math.max(1, Number(r.mortes)), -1],
+      ['mortes', 'Mais mortes', 'Doador Universal', (r) => Number(r.mortes), 1, 'mortes', 1, null],
+      ['pior_kda', 'Pior KDA', 'Desastre Ambulante', kda, -1, 'de KDA', 1, null],
+      ['abates', 'Mais abates', 'Máquina de Matar', (r) => Number(r.abates), 1, 'abates', 0, null],
+      ['assist', 'Mais assistências', 'Garçom Supremo', (r) => Number(r.assist), 1, 'assistências', 0, null],
+      ['dano', 'Maior dano', 'Canhão de Plasma', (r) => Number(r.dano), 1, 'de dano', 0, null],
+      ['kda', 'Melhor KDA', 'Intocável', kda, 1, 'de KDA', 0, null],
+      ['dano_recebido', 'Mais dano recebido', 'Muralha da China', (r) => Number(r.dano_recebido), 1, 'de dano recebido', 0, null],
+      ['ouro', 'Mais ouro', 'Tio Patinhas', (r) => Number(r.ouro), 1, 'de ouro', 0, null],
+      ['visao', 'Maior visão', 'Vigia Noturno', (r) => Number(r.visao), 1, 'de visão', 0, 'flex'],
+      ['cc', 'Mais controle de grupo', 'Era do Gelo', (r) => Number(r.cc), 1, 's de controle', 0, 'personalizada'],
     ];
     const out = [];
     for (const [fila, rs] of agrupa(placar.filter((r) => r.grupo), (r) => r.fila)) {
-      for (const [recorde, titulo, f, dir] of defs) {
+      for (const [recorde, titulo, apelido, f, dir, unidade, ruim, so] of defs) {
+        if (so && so !== fila) continue;
         const best = rs.slice().sort((a, b) => dir * (f(b) - f(a)) || (a.inicio < b.inicio ? -1 : 1))[0];
-        out.push({ fila, recorde, titulo, jogador: best.grupo, campeao_id: best.campeao_id, valor: r2(f(best)), dia: best.dia, partida: best.partida,
-          kda_txt: `${best.abates}/${best.mortes}/${best.assist}` });
+        out.push({ fila, recorde, titulo, apelido, unidade, ruim, jogador: best.grupo, campeao_id: best.campeao_id, valor: r2(f(best)),
+          dia: best.dia, partida: best.partida, kda_txt: `${best.abates}/${best.mortes}/${best.assist}` });
       }
     }
     return out;
@@ -1738,16 +1765,21 @@ dash.draw('recordes', (box) => {
   const rs = g.data.filter((r) => r.fila === window.mvp.fila);
   if (!rs.length) { box.append(el('div', 'empty', 'Nenhuma partida.')); return; }
   for (const r of rs) {
-    const bad = r.recorde === 'mortes' || r.recorde === 'pior_kda';
-    const c = el('div', 'card aw ' + (bad ? 'bad' : 'good')); c.id = `recorde-${r.fila}-${r.recorde}`;
-    c.append(icon(r.campeao_id));
-    const tx = el('div'); tx.style.minWidth = '0';
+    const c = el('div', 'card rec ' + (Number(r.ruim) ? 'bad' : 'good')); c.id = `recorde-${r.fila}-${r.recorde}`;
     const where = `fila=${enc(r.fila)}&recorde=${enc(r.recorde)}`;
-    const who = el('div', 'w', r.jogador); who.dataset.source = 'recordes'; who.dataset.field = 'jogador'; who.dataset.where = where;
-    const v = el('div', 'v'); const b = el('b', null, r.recorde === 'dano' ? Number(r.valor).toLocaleString('pt-BR') : (r.recorde.includes('kda') ? fmt2(r.valor) : String(r.valor)));
-    b.dataset.source = 'recordes'; b.dataset.field = 'valor'; b.dataset.where = where;
-    v.append(b, ` · ${champName(r.campeao_id)} · ${r.kda_txt} · ${dia(r.dia)}`);
-    tx.append(el('div', 't', r.titulo), who, v); c.append(tx); box.append(c);
+    const topo = el('div', 'rec-top');
+    topo.append(icon(r.campeao_id));
+    const tx = el('div'); tx.style.minWidth = '0';
+    const who = el('div', 'rec-who', r.jogador); who.dataset.source = 'recordes'; who.dataset.field = 'jogador'; who.dataset.where = where;
+    tx.append(el('div', 'rec-cat', r.titulo), el('div', 'rec-nome', r.apelido), who);
+    topo.append(tx); c.append(topo);
+    const txt = r.recorde === 'dano' || r.recorde === 'dano_recebido' || r.recorde === 'ouro' ? Number(r.valor).toLocaleString('pt-BR')
+      : r.recorde.includes('kda') ? fmt2(r.valor) : String(Math.round(Number(r.valor)));
+    const val = el('div', 'rec-val');
+    const b = el('b', null, txt); b.dataset.source = 'recordes'; b.dataset.field = 'valor'; b.dataset.where = where;
+    val.append(b, el('span', null, ' ' + r.unidade));
+    c.append(val, el('div', 'rec-pe', `${champName(r.campeao_id)} · ${r.kda_txt} · ${dia(r.dia)}`));
+    box.append(c);
   }
 });
 dash.draw('campeoes-grupo', (tb) => {
