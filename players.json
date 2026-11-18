@@ -24,6 +24,6 @@
   "inscricao": 10,
   "punicao": 20,
   "_anuladas": "Números das partidas (ou ids) tiradas da contagem por queda de jogador etc. Ex.: [12, 37]. O número continua reservado.",
-  "partidas_anuladas": [],
+  "partidas_anuladas": [#8],
   "partidas_ignoradas": []
 }
