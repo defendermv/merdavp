@@ -45,7 +45,7 @@ jobs:
         run: |
           git config user.name "merdavp-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A matches out docs puuids.json cache
+          git add -A matches out docs puuids.json numeracao.json cache
           if git diff --cached --quiet; then
             echo "mudou=false" >> "$GITHUB_OUTPUT"
           else

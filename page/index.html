@@ -92,8 +92,13 @@
 /* partidas */
 .mvp .matches { display: grid; gap: 8px; }
 .mvp details.match { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-.mvp details.match > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 4px auto 1fr auto; gap: 14px; align-items: center; padding: 10px 14px 10px 0; }
-.mvp .teams-sum { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; min-width: 0; }
+.mvp details.match > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 4px 250px 1fr auto; gap: 14px; align-items: center; padding: 10px 14px 10px 0; }
+.mvp .teams-sum { display: grid; grid-template-columns: 276px 74px 276px; justify-content: start; align-items: end; gap: 10px 14px; min-width: 0; }
+.mvp .teams-sum .score { text-align: center; align-self: center; }
+.mvp .tside { display: grid; gap: 4px; align-content: start; }
+.mvp .tres { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.mvp .tres.v { color: var(--lime); } .mvp .tres.d { color: var(--red); }
+.mvp .tside.dir .tres { text-align: right; }
 .mvp .tsum { display: flex; gap: 4px; }
 .mvp .face2 { display: grid; justify-items: center; gap: 4px; width: 52px; }
 .mvp .face2 .fn { font-size: 10px; line-height: 1.2; color: var(--muted); max-width: 52px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -121,10 +126,15 @@
 .mvp .score .us { color: var(--blue); } .mvp .score .them { color: var(--red); } .mvp .score .x { color: var(--dim); margin: 0 6px; font-weight: 400; }
 .mvp .chev { color: var(--dim); transition: transform .15s; }
 .mvp details[open] .chev { transform: rotate(180deg); }
+@media (max-width: 1280px) {
+  .mvp details.match > summary { grid-template-columns: 4px 1fr auto; row-gap: 8px; }
+  .mvp details.match > summary .teams-sum { grid-column: 2 / 4; grid-row: 2; }
+}
 @media (max-width: 600px) {
   .mvp details.match > summary { grid-template-columns: 4px 1fr auto; row-gap: 8px; }
   .mvp details.match > summary .teams-sum { grid-column: 2 / 4; grid-row: 2; }
   .mvp .face2 { width: 44px; } .mvp .face2 .fn { max-width: 44px; }
+  .mvp .teams-sum { display: flex; flex-wrap: wrap; align-items: center; }
   .mvp .tsum { gap: 2px; }
   .mvp details.match > summary .chev { display: none; }
 }
@@ -586,6 +596,42 @@
 .mvp .rec-pe { font-size: 12px; color: var(--dim); margin-top: -6px; }
 /* descrição embaixo do título em Trios ARAM e Times Flex */
 .mvp #estatisticas .two .sec-title { flex-direction: column; align-items: flex-start; gap: 6px; }
+
+/* temporadas: top 3, provisório, premiação e número da partida */
+.mvp .badge.b2 { background: #12403a; border-color: #3fc9b0; color: #9ff0e0; }
+.mvp .badge.b3 { background: #14343f; border-color: #4aa8d8; color: #a9dcf5; }
+.mvp .pos.b2 { background: rgba(63,201,176,.18); color: #3fc9b0; }
+.mvp .pos.b3 { background: rgba(74,168,216,.18); color: #4aa8d8; }
+.mvp .streak span.b2 { background: rgba(63,201,176,.2); color: #3fc9b0; }
+.mvp .streak span.b3 { background: rgba(74,168,216,.2); color: #4aa8d8; }
+.mvp .bdg.pos.b2 { border-color: #3fc9b0; color: #3fc9b0; }
+.mvp .bdg.pos.b3 { border-color: #4aa8d8; color: #4aa8d8; }
+.mvp .sc.p-1 { border-color: #4aa8d8; background: linear-gradient(110deg, rgba(74,168,216,.14), var(--panel2) 70%); } .mvp .sc.p-1 .pts { color: #4aa8d8; }
+.mvp .sc.p-2 { border-color: #3fc9b0; background: linear-gradient(110deg, rgba(63,201,176,.16), var(--panel2) 70%); } .mvp .sc.p-2 .pts { color: #3fc9b0; }
+.mvp .sc.p-3 { border-color: var(--green); background: linear-gradient(110deg, rgba(60,207,142,.22), var(--panel2) 70%); } .mvp .sc.p-3 .pts { color: var(--green); }
+.mvp .cnt.t1 { background: rgba(60,207,142,.15); color: var(--green); }
+.mvp .cnt.t2 { background: rgba(63,201,176,.14); color: #3fc9b0; }
+.mvp .cnt.t3 { background: rgba(74,168,216,.14); color: #4aa8d8; }
+.mvp table.rank tr.mvprow td { background: rgba(60,207,142,.09); }
+.mvp table.rank tr.mvprow td:first-child { box-shadow: inset 3px 0 0 var(--green); }
+.mvp table.rank tr.prov td { opacity: .8; }
+.mvp table.rank tr.sepr td { text-align: left; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--panel2); padding: 6px 10px; opacity: 1; }
+.mvp .ppp i.neg { background: var(--green); }
+.mvp .prov-chip { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--gold); border: 1px solid #7a6330; vertical-align: middle; }
+.mvp .nump { display: inline-block; font-weight: 700; color: var(--fg); background: var(--panel2); border-radius: 4px; padding: 0 6px; margin-right: 6px; font-variant-numeric: tabular-nums; }
+.mvp .prize { padding: 18px 20px; display: grid; gap: 14px; }
+.mvp .prize-h { display: flex; flex-wrap: wrap; gap: 4px 14px; justify-content: space-between; align-items: baseline; }
+.mvp .prize-h b { font-size: 16px; font-weight: 700; }
+.mvp .prize-h span { color: var(--muted); font-size: 13px; }
+.mvp .prize-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.mvp .prize-cell { background: var(--panel2); padding: 10px 12px; display: grid; gap: 2px; align-content: start; min-width: 0; }
+.mvp .prize-cell .lab { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.mvp .prize-cell .val { font-size: 18px; font-weight: 700; overflow-wrap: anywhere; }
+.mvp .prize-cell .sub { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.mvp .prize-cell.good .val { color: var(--green); }
+.mvp .prize-cell.bad .val { color: #ff8a80; }
+.mvp .prize-cell.gold .val { color: var(--gold); }
+.mvp .prize p { font-size: 13px; color: var(--muted); line-height: 1.55; }
 </style>
 
 <div class="mvp" lang="pt-BR" data-read>
@@ -612,12 +658,12 @@
       <header class="top hero-g">
         <div class="wrap hero-in">
           <div class="hero-txt">
-            <span class="tag-live">Ranking do grupo · segunda a domingo</span>
+            <span class="tag-live">Ranking do grupo · temporadas mensais</span>
             <h1 class="hero-title" id="hero-title">Última partida</h1>
             <p class="lede" data-draw="lede">—</p>
             <div class="weekpick">
-              <label for="semana" class="sr-only">Semana</label>
-              <select class="dash-select" id="semana" data-draw="semanas" data-source="ranking" aria-label="Semana"></select>
+              <label for="semana" class="sr-only">Temporada</label>
+              <select class="dash-select" id="semana" data-draw="semanas" data-source="ranking" aria-label="Temporada"></select>
             </div>
           </div>
         </div>
@@ -670,7 +716,7 @@
         <div class="card spot best" id="melhor-flex" data-source="ranking">
           <div data-draw="spot-flex-best-img"></div>
           <div>
-            <div class="tag">MVP da semana</div>
+            <div class="tag" data-draw="spot-flex-best-tag">—</div>
             <div class="who" data-draw="spot-flex-best-who">—</div>
             <div class="facts" data-draw="spot-flex-best-facts">—</div>
             <div class="badges spot-titles" data-draw="spot-flex-best-titulos" data-source="titulos premios"></div>
@@ -678,15 +724,19 @@
         </div>
       </div>
 
+      <div id="premiacao-flex-box" class="prize-wrap">
+        <div class="card prize" data-draw="premiacao" data-source="ranking ranking_aram config"></div>
+      </div>
+
       <div id="premios-flex-box">
-        <div class="sec-title"><h2>Awards</h2><span class="muted">Entre os jogadores do grupo, nas flex da semana.</span></div>
+        <div class="sec-title"><h2>Awards</h2><span class="muted">Entre os jogadores do grupo, nas flex da temporada.</span></div>
         <div class="awards-wrap" data-draw="premios-flex" data-source="premios"></div>
       </div>
 
       <div id="ranking-flex">
         <div class="sec-title">
-          <h2>Ranking da semana</h2>
-          <span class="muted">8º = 1 ponto, 9º = 2, 10º = 3 e MVP (1º lugar) tira 1, divididos pelas partidas. Quanto maior, pior.</span>
+          <h2>Ranking da temporada</h2>
+          <span class="muted">10º = 3 pontos, 9º = 2 e 8º = 1; 1º tira 3, 2º tira 2 e 3º tira 1. Divididos pelas partidas: quanto maior, pior (MerdaVP); quanto menor, melhor (MVP). Só entra na disputa quem tem 10 partidas.</span>
         </div>
         <div class="card tablewrap">
           <table class="rank" data-source="ranking" data-row-key="semana,jogador">
@@ -698,7 +748,9 @@
                 <th data-field="dez">10º</th>
                 <th data-field="nove">9º</th>
                 <th data-field="oito">8º</th>
-                <th data-field="mvps">MVP</th>
+                <th data-field="tres">3º</th>
+                <th data-field="dois">2º</th>
+                <th data-field="mvps">1º</th>
                 <th data-field="pontos">Pontos</th>
                 <th class="r" data-field="nota">Pts/partida</th>
               </tr>
@@ -710,8 +762,8 @@
 
       <div id="partidas-flex">
         <div class="sec-title">
-          <h2>Partidas da semana</h2>
-          <span class="muted">Flex com 3 ou mais do grupo. Clique numa partida para ver o placar.</span>
+          <h2>Partidas da temporada</h2>
+          <span class="muted">Flex com 3 ou mais do grupo e personalizadas 5x5 que valem como flex. O número (#) identifica a partida. Clique para ver o placar.</span>
         </div>
         <div class="matches" data-draw="partidas-flex" data-source="partidas placar"></div>
       </div>
@@ -723,7 +775,7 @@
         <div class="card spot worst" id="pior-custom" data-source="ranking_aram">
           <div data-draw="spot-custom-worst-img"></div>
           <div>
-            <div class="tag">Pior nas personalizadas</div>
+            <div class="tag" data-draw="spot-custom-worst-tag">—</div>
             <div class="who" data-draw="spot-custom-worst-who">—</div>
             <div class="facts" data-draw="spot-custom-worst-facts">—</div>
           </div>
@@ -731,22 +783,26 @@
         <div class="card spot best" id="melhor-custom" data-source="ranking_aram">
           <div data-draw="spot-custom-best-img"></div>
           <div>
-            <div class="tag">Mais limpo nas personalizadas</div>
+            <div class="tag" data-draw="spot-custom-best-tag">—</div>
             <div class="who" data-draw="spot-custom-best-who">—</div>
             <div class="facts" data-draw="spot-custom-best-facts">—</div>
           </div>
         </div>
       </div>
 
+      <div id="premiacao-custom-box" class="prize-wrap">
+        <div class="card prize" data-draw="premiacao" data-source="ranking ranking_aram config"></div>
+      </div>
+
       <div id="premios-custom-box">
-        <div class="sec-title"><h2>Awards</h2><span class="muted">Entre os jogadores do grupo, nas personalizadas da semana.</span></div>
+        <div class="sec-title"><h2>Awards</h2><span class="muted">Entre os jogadores do grupo, nas personalizadas de ARAM da temporada.</span></div>
         <div class="awards-wrap" data-draw="premios-custom" data-source="premios"></div>
       </div>
 
       <div id="ranking-custom">
         <div class="sec-title">
-          <h2>Ranking das personalizadas</h2>
-          <span class="muted">Fora do MerdaVP oficial. As três últimas colocações levam 3, 2 e 1 pontos, e o MVP (1º lugar) tira 1.</span>
+          <h2>Ranking do ARAM</h2>
+          <span class="muted">Mesmos pontos da flex: os três últimos levam 3, 2 e 1; o 1º tira 3, o 2º tira 2 e o 3º tira 1. Quanto maior, pior (MerdaVP do ARAM); quanto menor, melhor (MVP do ARAM). Só entra na disputa quem tem 10 partidas.</span>
         </div>
         <div class="card tablewrap">
           <table class="rank" data-source="ranking_aram" data-row-key="semana,jogador">
@@ -755,10 +811,12 @@
                 <th class="l">#</th>
                 <th class="l" data-field="jogador">Jogador</th>
                 <th data-field="partidas">Partidas</th>
-                <th data-field="seis">Último</th>
-                <th data-field="cinco">Penúlt.</th>
-                <th data-field="quatro">Antepen.</th>
-                <th data-field="mvps">MVP</th>
+                <th data-field="dez">Último</th>
+                <th data-field="nove">Penúlt.</th>
+                <th data-field="oito">Antepen.</th>
+                <th data-field="tres">3º</th>
+                <th data-field="dois">2º</th>
+                <th data-field="mvps">1º</th>
                 <th data-field="pontos">Pontos</th>
                 <th class="r" data-field="nota">Pts/partida</th>
               </tr>
@@ -770,8 +828,8 @@
 
       <div id="partidas-custom">
         <div class="sec-title">
-          <h2>Personalizadas da semana</h2>
-          <span class="muted">De 3x3 a 5x5, as que o Defender jogou. Clique numa partida para ver o placar.</span>
+          <h2>Personalizadas de ARAM da temporada</h2>
+          <span class="muted">As personalizadas no ARAM que o Defender e o grupo jogaram. O número (#) identifica a partida. Clique para ver o placar.</span>
         </div>
         <div class="matches" data-draw="partidas-custom" data-source="aram placar"></div>
       </div>
@@ -790,12 +848,12 @@
         <div data-draw="perfil-img"></div>
         <div>
           <h3 data-draw="perfil-nome">—</h3>
-          <p class="muted">Desde 29/10, em todas as semanas.</p>
+          <p class="muted">Desde 16/11, em todas as temporadas.</p>
           <div class="tiles" data-draw="perfil-tiles"></div>
         </div>
       </div>
       <div>
-        <div class="sec-title"><h2>Coleção de títulos</h2><span class="muted">Quantas vezes cada título caiu, zueira primeiro. Os com brilho vêm dos Awards da semana. Passe o mouse para ver o motivo.</span></div>
+        <div class="sec-title"><h2>Coleção de títulos</h2><span class="muted">Quantas vezes cada título caiu, zueira primeiro. Os com brilho vêm dos Awards da temporada. Passe o mouse para ver o motivo.</span></div>
         <div class="card" style="padding: 14px;"><div class="badges" data-draw="perfil-titulos" data-source="titulos_contagem"></div></div>
       </div>
       <div>
@@ -826,7 +884,7 @@
     <!-- ESTATÍSTICAS -->
     <section class="panel-tab" id="estatisticas" data-panel="estatisticas" hidden>
       <div class="toolbar">
-        <p class="muted">Todas as partidas desde 29/10, só os jogadores do grupo.</p>
+        <p class="muted">Todas as partidas desde 16/11, só os jogadores do grupo.</p>
         <div class="seg" role="group" aria-label="Tipo de partida">
           <button type="button" data-fila="flex" aria-pressed="true">Flex</button>
           <button type="button" data-fila="personalizada" aria-pressed="false">Personalizadas</button>
@@ -900,18 +958,18 @@
     <section class="panel-tab" id="galeria" data-panel="galeria" hidden>
       <div>
         <div class="sec-title">
-          <h2>MerdaVP de cada semana</h2>
-          <span class="muted">Quem for MerdaVP 5 vezes no ano troca de nick (regra 9).</span>
+          <h2>MerdaVP de cada temporada</h2>
+          <span class="muted">Quem for MerdaVP 5 vezes no ano troca de nick (regra 12).</span>
         </div>
         <div class="hall" data-draw="historico" data-source="merdavps"></div>
       </div>
       <div>
-        <div class="sec-title"><h2>Contagem no ano</h2><span class="muted">Só semanas encerradas.</span></div>
+        <div class="sec-title"><h2>Contagem no ano</h2><span class="muted">Só temporadas encerradas.</span></div>
         <div class="tally" data-draw="contagem" data-source="merdavps"></div>
       </div>
       <div>
-        <div class="sec-title"><h2>Pior das personalizadas por semana</h2><span class="muted">Fora da contagem oficial.</span></div>
-        <div class="hall" data-draw="historico-custom" data-source="ranking_aram"></div>
+        <div class="sec-title"><h2>MerdaVP do ARAM de cada temporada</h2><span class="muted">Também paga a punição.</span></div>
+        <div class="hall" data-draw="historico-custom" data-source="merdavps_aram"></div>
       </div>
     </section>
 
@@ -958,17 +1016,20 @@
       <div class="card rules">
         <h3>Regras do MerdaVP</h3>
         <ol>
-          <li>Vale flex com 3 ou mais do grupo no mesmo time.</li>
-          <li>Até os 3 piores do grupo na partida pontuam se ficarem entre 8º e 10º: 8º vale 1, 9º vale 2 e 10º vale 3.</li>
-          <li>Quem for o MVP da flex (1º lugar entre os 10 jogadores) tira 1 ponto do seu total de MerdaVP. Vale a partir de 12/11/2026.</li>
-          <li>O pior da semana é quem tiver mais pontos por partida, de segunda a domingo, independente de vitória ou derrota.</li>
-          <li>O eleito pior da semana perde o direito de escolher campeão e rota na semana seguinte e grava um vídeo lendo o roteiro do grupo.</li>
-          <li>Queda de energia ou internet com prova (foto ou print) tira a partida da contagem de todos. É só avisar o Defender.</li>
+          <li><b>Temporadas mensais.</b> Cada temporada vai do dia 8 até o dia 7 do mês seguinte. A primeira vai de 16/11/2026 a 07/12/2026; a segunda começa em 08/12 e vai até 07/01/2027, e assim por diante.</li>
+          <li>Vale flex com 3 ou mais do grupo no mesmo time. Personalizada 5x5 na Summoner's Rift com 3 ou mais do grupo na partida também vale como flex e entra no ranking da flex, com o mesmo cálculo de nota. As outras personalizadas valem só no ARAM, no ranking do ARAM.</li>
+          <li><b>Pontos por partida</b> (flex e ARAM): os três últimos pontuam, 8º vale +1, 9º vale +2 e 10º vale +3. Os três primeiros tiram pontos: 1º tira 3, 2º tira 2 e 3º tira 1.</li>
+          <li>A pontuação final é o total de pontos dividido pelo número de partidas, de vitória ou de derrota. Quem tiver <b>menos</b> pontos por partida é o <b>MVP</b> da temporada; quem tiver <b>mais</b> é o <b>MerdaVP</b>. Flex e ARAM têm, cada um, o seu MVP e o seu MerdaVP.</li>
+          <li><b>Ranking provisório.</b> Todo mundo entra na tabela e pontua normalmente, mas só é efetivado depois de 10 partidas na temporada (10 na flex e 10 no ARAM, cada ranking conta separado). Quem não chegar lá fica fora da premiação e da punição daquele ranking, e a inscrição de R$ 10 fica como doação.</li>
+          <li><b>Premiação.</b> Todos os inscritos fazem um pix de R$ 10 para o admin na primeira semana da temporada. Os MerdaVPs do ARAM e da flex fazem mais um pix de R$ 20 no dia 08, depois de definido o pior. O prêmio é dividido entre o MVP da Flex e o MVP do ARAM.</li>
+          <li>O eleito MerdaVP perde o direito de escolher campeão e rota na temporada seguinte e grava um vídeo lendo o roteiro do grupo.</li>
+          <li>Cada partida tem um número (#12, por exemplo), que aparece no placar. Queda de energia ou internet com prova (foto ou print) tira a partida da contagem de todos: avise o Defender com o número da partida. A partida anulada mantém o número, mas sai de todos os rankings.</li>
           <li>Rage ou quit de propósito: a pessoa vira automaticamente o pior da partida e o grupo julga o agravante.</li>
-          <li>Desempate: menos partidas jogadas, depois mais colocações entre 8º e 10º, depois mais MVPs.</li>
-          <li>Partida iniciada antes da meia-noite (horário de Brasília) conta para o dia em que começou.</li>
+          <li>Desempate do MerdaVP: menos partidas jogadas, depois mais colocações entre os três últimos, depois menos colocações entre os três primeiros. Desempate do MVP: mais partidas jogadas, depois mais colocações entre os três primeiros.</li>
+          <li>Partida iniciada antes da meia-noite (horário de Brasília) conta para o dia em que começou; isso vale também na virada da temporada.</li>
           <li>Quem for MerdaVP 5 vezes no ano troca de nick para um escolhido e votado pelo grupo, a partir de 29/10/2026.</li>
         </ol>
+        <p data-draw="regras-anuladas">—</p>
         <h3>Títulos</h3>
         <p>Cada partida dá títulos para quem é do grupo, comparando com todos os jogadores da mesma partida. Os dourados são mérito; os cinza são zueira.</p>
         <div class="tgrid">
@@ -995,13 +1056,14 @@
           <div><span class="bdg ruim"><span class="ic">🦯</span>Cego</span> menos visão (flex)</div>
           <div><span class="bdg ruim"><span class="ic">🦝</span>Ladrão de Kill</span> muito abate, pouca assistência</div>
         </div>
-        <p>Quem leva um Award na semana também ganha um título na coleção: 🏆 Melhor da Semana, 👊 Rei do Dano, 🍽️ Garçom da Semana, 🔭 Farol da Semana e 🔪 Matador da Semana; e na zueira 🧿 Campeão Amaldiçoado, 🍖 Feeder da Semana, 🦇 Cego da Semana, ☮️ Pacifista da Semana e 🧳 Turista da Semana.</p>
+        <p>Quem leva um Award na temporada também ganha um título na coleção: 🏆 Melhor da Temporada, 👊 Rei do Dano, 🍽️ Garçom da Temporada, 🔭 Farol da Temporada e 🔪 Matador da Temporada; e na zueira 🧿 Campeão Amaldiçoado, 🍖 Feeder da Temporada, 🦇 Cego da Temporada, ☮️ Pacifista da Temporada e 🧳 Turista da Temporada.</p>
         <h3>Como sai a colocação de 1º a 10º</h3>
         <p>Cada jogador recebe uma nota que o compara com os outros 9 da mesma partida: KDA, mortes, participação em abates, dano a campeões, dano recebido, ouro, farm e visão por minuto, com um bônus para quem venceu. Quem soma mais fica em 1º e quem soma menos, em 10º.</p>
         <p>Desde 13/11/2026 a nota também compara cada jogador com o <b>rival da mesma rota</b> (suporte contra suporte, ADC contra ADC), conta <b>objetivos</b> (dano em torres, dragões e barão, e participação em torres, dragões, barões e arautos) e olha o <b>início de jogo</b> (ouro e XP aos 15 minutos e farm aos 10, contra o rival de rota). Assim o suporte não sai prejudicado só por ganhar menos ouro e farm. As partidas anteriores a 13/11 continuam com a nota antiga.</p>
         <p>Os pesos foram ajustados com 34 colocações do OP.GG anotadas na planilha antiga: a nota põe 30 delas entre 8º e 10º, e a colocação média de cada rota fica entre 5,2º e 5,7º. Ela é parecida com o OP Score, mas não bate sempre com o OP.GG.</p>
         <h3>Personalizadas</h3>
-        <p>Ranking separado, com as personalizadas de 3x3 a 5x5 que o Defender jogou. A nota é a mesma ideia, sem farm e visão. As três últimas colocações levam 3, 2 e 1 pontos. Desde 12/11/2026, o MVP (1º lugar) tira 1 ponto do ranking das personalizadas; isso não mexe no MerdaVP da flex.</p>
+        <p><b>ARAM:</b> ranking separado, com as personalizadas no ARAM (de 3x3 a 5x5). A nota segue a mesma ideia, sem farm e visão, e os pontos são os mesmos da flex: três últimos levam 3, 2 e 1; três primeiros tiram 3, 2 e 1.</p>
+        <p><b>5x5 na Summoner's Rift:</b> com 3 ou mais do grupo, a personalizada conta como flex e usa a nota completa da flex. Como o cliente do jogo não manda a linha do tempo, o início de jogo (ouro e XP aos 15 minutos) não entra nessas partidas, e a comparação com o rival de rota só vale quando o cliente identifica as 5 rotas de cada time.</p>
       </div>
     </section>
       </div>
@@ -1015,88 +1077,94 @@ window.mvp = window.mvp || { semana: null, aba: 'agora' };
 const fmt2 = (v) => (Math.round(v * 100) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const fmtK = (v) => (Number(v) >= 1000 ? (Number(v) / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + 'k' : String(v));
 const dia = (iso) => { const [, m, d] = iso.split('-'); return `${d}/${m}`; };
-const fimSemana = (iso) => { const t = new Date(iso + 'T12:00:00Z'); t.setUTCDate(t.getUTCDate() + 6); return t.toISOString().slice(0, 10); };
+const cfg = () => { const g = dash.data('config'); return (g.status === 'ok' && g.data && g.data[0]) || { primeira: '2026-11-16', dia_virada: 8, minimo_partidas: 10, inscricao: 10, punicao: 20, jogadores: [], anuladas: [] }; };
+// temporada: começa em `iso` (dia 8; a primeira, 16/11) e termina no dia 7 do mês seguinte
+const fimTemporada = (iso) => { const [y, m] = iso.split('-').map(Number); return new Date(Date.UTC(y, m, cfg().dia_virada - 1, 12)).toISOString().slice(0, 10); };
+const numTemporada = (iso) => { const [y, m] = iso.split('-').map(Number); const [py, pm] = cfg().primeira.split('-').map(Number); return (y - py) * 12 + (m - pm) + 1; };
+const diaMais = (iso, n) => { const t = new Date(iso + 'T12:00:00Z'); t.setUTCDate(t.getUTCDate() + n); return t.toISOString().slice(0, 10); };
+const reais = (v) => 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: Number.isInteger(Number(v)) ? 0 : 2, maximumFractionDigits: 2 });
 const hojeBRT = () => new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10);
 const enc = (s) => encodeURIComponent(String(s));
 const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
 
 /* ---------- cálculos ---------- */
-dash.calc('ranking', {
-  inputs: ['partidas'],
-  title: 'Ranking por semana',
-  description: 'Por semana e jogador: partidas, 10º/9º/8º, MVPs, pontos e pontos por partida, do pior (lugar 1) para o melhor, com o desempate da regra 7.',
-  fn: (partidas) => {
-    const by = new Map();
-    for (const r of partidas) {
-      const k = r.semana + '|' + r.jogador;
-      if (!by.has(k)) by.set(k, { semana: r.semana, jogador: r.jogador, partidas: 0, dez: 0, nove: 0, oito: 0, mvps: 0, pontos: 0 });
-      const s = by.get(k);
-      s.partidas += 1;
-      s.pontos += Number(r.pontos);
-      s.dez += Number(r.posicao) === 10 ? 1 : 0;
-      s.nove += Number(r.posicao) === 9 ? 1 : 0;
-      s.oito += Number(r.posicao) === 8 ? 1 : 0;
-      s.mvps += Number(r.mvp);
-    }
-    const rows = [...by.values()].map((s) => ({ ...s, nota: Math.round((s.pontos / s.partidas) * 100) / 100 }));
-    const out = [];
-    for (const semana of [...new Set(rows.map((r) => r.semana))].sort()) {
-      const w = rows.filter((r) => r.semana === semana).sort((a, b) =>
-        b.pontos / b.partidas - a.pontos / a.partidas ||
-        a.partidas - b.partidas ||
-        (b.dez + b.nove + b.oito) - (a.dez + a.nove + a.oito) ||
-        b.mvps - a.mvps);
-      w.forEach((r, i) => out.push({ ...r, lugar: i + 1 }));
-    }
-    return out;
-  },
-});
+/* Ordem do pior para o melhor. Desempate do pior: menos partidas, mais colocações entre os três últimos,
+   menos colocações entre os três primeiros. O melhor (MVP) é o último da lista: menos pontos por partida,
+   mais partidas e mais colocações entre os três primeiros. */
+const cmpPior = (a, b) => b.pontos / b.partidas - a.pontos / a.partidas || a.partidas - b.partidas ||
+  (b.dez + b.nove + b.oito) - (a.dez + a.nove + a.oito) || (a.mvps + a.dois + a.tres) - (b.mvps + b.dois + b.tres);
 
-dash.calc('merdavps', {
-  inputs: ['ranking'],
-  title: 'MerdaVP de cada semana',
-  description: 'O lugar 1 do ranking flex de cada semana, com quantas vezes cada jogador já foi o pior em semanas encerradas.',
-  fn: (ranking) => {
-    const hoje = new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10);
-    const vezes = {};
-    const rows = ranking.filter((r) => r.lugar === 1).map((r) => {
-      const fim = new Date(r.semana + 'T12:00:00Z'); fim.setUTCDate(fim.getUTCDate() + 6);
-      const encerrada = fim.toISOString().slice(0, 10) < hoje ? 1 : 0;
-      if (encerrada) vezes[r.jogador] = (vezes[r.jogador] || 0) + 1;
-      return { semana: r.semana, jogador: r.jogador, nota: r.nota, partidas: r.partidas, encerrada };
-    });
-    return rows.map((r) => ({ ...r, vezes_no_ano: vezes[r.jogador] || 0 }));
-  },
+function montaRanking(rows, minimo) {
+  const by = new Map();
+  for (const r of rows) {
+    const k = r.semana + '|' + r.jogador;
+    if (!by.has(k)) by.set(k, { semana: r.semana, jogador: r.jogador, partidas: 0, dez: 0, nove: 0, oito: 0, tres: 0, dois: 0, mvps: 0, pontos: 0 });
+    const s = by.get(k);
+    const pos = Number(r.posicao), doFim = Number(r.jogadores || 10) - pos; // 0 = último
+    s.partidas += 1;
+    s.pontos += Number(r.pontos);
+    s.dez += doFim === 0 ? 1 : 0; s.nove += doFim === 1 ? 1 : 0; s.oito += doFim === 2 ? 1 : 0;
+    s.mvps += pos === 1 ? 1 : 0; s.dois += pos === 2 ? 1 : 0; s.tres += pos === 3 ? 1 : 0;
+  }
+  const todos = [...by.values()].map((s) => ({ ...s, nota: Math.round((s.pontos / s.partidas) * 100) / 100,
+    efetivo: s.partidas >= minimo ? 1 : 0, faltam: Math.max(0, minimo - s.partidas) }));
+  const out = [];
+  for (const semana of [...new Set(todos.map((r) => r.semana))].sort()) {
+    const w = todos.filter((r) => r.semana === semana);
+    const ef = w.filter((r) => r.efetivo).sort(cmpPior), pv = w.filter((r) => !r.efetivo).sort(cmpPior);
+    [...ef, ...pv].forEach((r, i) => out.push({ ...r, lugar: i + 1 }));  // efetivados primeiro, depois os provisórios
+  }
+  return out;
+}
+const minimoDe = (c) => Number((c[0] || {}).minimo_partidas) || 10;
+
+dash.calc('ranking', {
+  inputs: ['partidas', 'config'],
+  title: 'Ranking da flex por temporada',
+  description: 'Por temporada e jogador (flex, inclusive as personalizadas 5x5 que valem como flex): partidas, 10º/9º/8º, 3º/2º/1º, pontos e pontos por partida, do pior (MerdaVP) para o melhor (MVP). Quem não tem o mínimo de partidas fica provisório, depois dos efetivados.',
+  fn: (partidas, config) => montaRanking(partidas, minimoDe(config)),
 });
 
 dash.calc('ranking_aram', {
-  inputs: ['aram'],
-  title: 'Ranking das personalizadas por semana',
-  description: 'Por semana e jogador nas personalizadas (3x3 a 5x5): partidas, vezes em último/penúltimo/antepenúltimo, MVPs, pontos e pontos por partida, do pior (lugar 1) para o melhor.',
-  fn: (personalizadas) => {
-    const by = new Map();
-    for (const r of personalizadas) {
-      const k = r.semana + '|' + r.jogador;
-      if (!by.has(k)) by.set(k, { semana: r.semana, jogador: r.jogador, partidas: 0, seis: 0, cinco: 0, quatro: 0, mvps: 0, pontos: 0 });
-      const s = by.get(k);
-      const doFim = Number(r.jogadores) - Number(r.posicao); // 0 = último
-      s.partidas += 1;
-      s.pontos += Number(r.pontos);
-      s.seis += doFim === 0 ? 1 : 0;
-      s.cinco += doFim === 1 ? 1 : 0;
-      s.quatro += doFim === 2 ? 1 : 0;
-      s.mvps += Number(r.mvp);
-    }
-    const rows = [...by.values()].map((s) => ({ ...s, nota: Math.round((s.pontos / s.partidas) * 100) / 100 }));
-    const out = [];
-    for (const semana of [...new Set(rows.map((r) => r.semana))].sort()) {
-      const w = rows.filter((r) => r.semana === semana).sort((a, b) =>
-        b.pontos / b.partidas - a.pontos / a.partidas || a.partidas - b.partidas ||
-        (b.seis + b.cinco + b.quatro) - (a.seis + a.cinco + a.quatro) || b.mvps - a.mvps);
-      w.forEach((r, i) => out.push({ ...r, lugar: i + 1 }));
-    }
-    return out;
-  },
+  inputs: ['aram', 'config'],
+  title: 'Ranking do ARAM por temporada',
+  description: 'Por temporada e jogador nas personalizadas de ARAM: partidas, vezes em último/penúltimo/antepenúltimo, 3º/2º/1º, pontos e pontos por partida, do pior (MerdaVP do ARAM) para o melhor (MVP do ARAM). Quem não tem o mínimo de partidas fica provisório, depois dos efetivados.',
+  fn: (personalizadas, config) => montaRanking(personalizadas, minimoDe(config)),
+});
+
+/* MerdaVP (pior) e MVP (melhor) de uma temporada. Só valem com 2 efetivados ou mais;
+   antes disso mostramos o líder provisório. */
+function titulares(rows) {
+  const ef = rows.filter((r) => r.efetivo);
+  if (ef.length >= 2) return { pior: ef[0], melhor: ef[ef.length - 1], provisorio: false };
+  const todos = rows.slice().sort(cmpPior);
+  return { pior: todos[0] || null, melhor: todos.length > 1 ? todos[todos.length - 1] : null, provisorio: true };
+}
+function historicoTemporadas(ranking) {
+  const hoje = hojeBRT();
+  const vezes = {};
+  const out = [];
+  for (const semana of [...new Set(ranking.map((r) => r.semana))].sort()) {
+    const t = titulares(ranking.filter((r) => r.semana === semana));
+    if (!t.pior) continue;
+    const encerrada = fimTemporada(semana) < hoje ? 1 : 0;
+    if (encerrada && !t.provisorio) vezes[t.pior.jogador] = (vezes[t.pior.jogador] || 0) + 1;
+    out.push({ semana, jogador: t.pior.jogador, nota: t.pior.nota, partidas: t.pior.partidas, encerrada, provisorio: t.provisorio ? 1 : 0,
+      mvp_jogador: t.melhor ? t.melhor.jogador : '', mvp_nota: t.melhor ? t.melhor.nota : '', mvp_partidas: t.melhor ? t.melhor.partidas : '' });
+  }
+  return out.map((r) => ({ ...r, vezes_no_ano: vezes[r.jogador] || 0 }));
+}
+dash.calc('merdavps', {
+  inputs: ['ranking'],
+  title: 'MerdaVP e MVP de cada temporada (flex)',
+  description: 'O pior (MerdaVP) e o melhor (MVP) do ranking flex de cada temporada, com quantas vezes cada jogador já foi MerdaVP em temporadas encerradas. Sem 2 efetivados, mostra o líder provisório.',
+  fn: (ranking) => historicoTemporadas(ranking),
+});
+dash.calc('merdavps_aram', {
+  inputs: ['ranking_aram'],
+  title: 'MerdaVP e MVP de cada temporada (ARAM)',
+  description: 'O pior (MerdaVP do ARAM) e o melhor (MVP do ARAM) de cada temporada. Sem 2 efetivados, mostra o líder provisório.',
+  fn: (ranking) => historicoTemporadas(ranking),
 });
 
 /* ---------- apoio ---------- */
@@ -1141,13 +1209,13 @@ function rankingDaSemana(id) {
 }
 const PANEL_DRAWS = {
   agora: ['ultima-h', 'ultima-pontos', 'ultima-motivos', 'hoje-label', 'hoje', 'ultima-placar'],
-  flex: ['spot-flex-worst-img', 'spot-flex-worst-tag', 'spot-flex-worst-who', 'spot-flex-worst-facts', 'spot-flex-best-img', 'spot-flex-best-who', 'spot-flex-best-facts', 'spot-flex-worst-titulos', 'spot-flex-best-titulos', 'premios-flex', 'tabela-flex', 'partidas-flex'],
-  custom: ['spot-custom-worst-img', 'spot-custom-worst-who', 'spot-custom-worst-facts', 'spot-custom-best-img', 'spot-custom-best-who', 'spot-custom-best-facts', 'premios-custom', 'tabela-custom', 'partidas-custom'],
+  flex: ['premiacao', 'spot-flex-best-tag', 'spot-flex-worst-img', 'spot-flex-worst-tag', 'spot-flex-worst-who', 'spot-flex-worst-facts', 'spot-flex-best-img', 'spot-flex-best-who', 'spot-flex-best-facts', 'spot-flex-worst-titulos', 'spot-flex-best-titulos', 'premios-flex', 'tabela-flex', 'partidas-flex'],
+  custom: ['premiacao', 'spot-custom-worst-tag', 'spot-custom-best-tag', 'spot-custom-worst-img', 'spot-custom-worst-who', 'spot-custom-worst-facts', 'spot-custom-best-img', 'spot-custom-best-who', 'spot-custom-best-facts', 'premios-custom', 'tabela-custom', 'partidas-custom'],
   jogadores: ['jog-picker', 'perfil-img', 'perfil-nome', 'perfil-tiles', 'perfil-titulos', 'perfil-titulos-partidas', 'perfil-streak', 'perfil-campeoes'],
   estatisticas: ['recordes', 'campeoes-bons', 'campeoes-ruins', 'campeoes-mais', 'trios', 'times-flex'],
   galeria: ['historico', 'contagem', 'historico-custom'],
   sorteio: ['sorteio-jogadores', 'sorteio-status', 'sorteio-resultado'],
-  regras: [],
+  regras: ['regras-anuladas'],
 };
 function verPerfil(jogador) { window.mvp.jogador = jogador; abrirAba('jogadores'); dash.setLink('jogadores'); }
 function redrawAll() { dash.draw('lede'); (PANEL_DRAWS[window.mvp.aba] || []).forEach((n) => dash.draw(n)); }
@@ -1177,7 +1245,7 @@ document.querySelectorAll('.mvp [data-tab]').forEach((b) => b.addEventListener('
 dash.draw('semanas', (sel) => {
   const ws = semanas().slice().reverse();
   const cur = semanaAtual();
-  sel.replaceChildren(...ws.map((w) => new Option(`${dia(w)} a ${dia(fimSemana(w))}`, w)));
+  sel.replaceChildren(...ws.map((w) => new Option(`Temporada ${numTemporada(w)} · ${dia(w)} a ${dia(fimTemporada(w))}`, w)));
   if (cur) sel.value = cur;
   sel.onchange = () => { window.mvp.semana = sel.value; redrawAll(); };
 });
@@ -1185,7 +1253,7 @@ dash.draw('semanas', (sel) => {
 dash.draw('lede', (p) => {
   const w = semanaAtual();
   if (!w) { p.textContent = '—'; return; }
-  p.textContent = fimSemana(w) >= hojeBRT() ? 'Semana em andamento' : 'Semana encerrada';
+  p.textContent = `Temporada ${numTemporada(w)} · ` + (fimTemporada(w) >= hojeBRT() ? 'em andamento' : 'encerrada');
 });
 
 /* ---------- cartões pior / melhor ---------- */
@@ -1219,55 +1287,76 @@ function spot(prefix, id, dataset, pick, factsFn, vazio = '—') {
   });
 }
 const factsFlex = (r) => [['nota', fmt2(r.nota), 'pontos por partida', true], ['partidas', String(r.partidas), r.partidas === 1 ? 'partida' : 'partidas'], ['dez', String(r.dez), '× 10º'], ['nove', String(r.nove), '× 9º'], ['oito', String(r.oito), '× 8º']];
-const factsFlexBest = (r) => [['mvps', String(r.mvps), r.mvps === 1 ? 'MVP na semana' : 'MVPs na semana', true], ['partidas', String(r.partidas), 'partidas'], ['nota', fmt2(r.nota), 'pts/partida']];
-const factsCustom = (r) => [['nota', fmt2(r.nota), 'pontos por partida', true], ['partidas', String(r.partidas), 'partidas'], ['seis', String(r.seis), '× último'], ['cinco', String(r.cinco), '× penúltimo']];
-const factsCustomBest = (r) => [['nota', fmt2(r.nota), 'pontos por partida', true], ['partidas', String(r.partidas), 'partidas'], ['mvps', String(r.mvps), 'MVP']];
-spot('spot-flex-worst', 'ranking', 'partidas', (rows) => rows[0], factsFlex);
-spot('spot-flex-best', 'ranking', 'partidas', (rows) => rows.filter((r) => r.mvps > 0).sort((a, b) => b.mvps - a.mvps || a.nota - b.nota || a.partidas - b.partidas)[0] || null, factsFlexBest, 'Ninguém foi MVP ainda');
-spot('spot-custom-worst', 'ranking_aram', 'aram', (rows) => rows[0], factsCustom);
-spot('spot-custom-best', 'ranking_aram', 'aram', (rows) => rows[rows.length - 1], factsCustomBest);
-dash.draw('spot-flex-worst-tag', (t) => {
-  const s = rankingDaSemana('ranking');
-  t.textContent = !s ? '—' : fimSemana(s.w) >= hojeBRT() ? 'Pior da semana até agora' : 'MerdaVP da semana';
-});
+const factsBest = (r) => [['nota', fmt2(r.nota), 'pontos por partida', true], ['partidas', String(r.partidas), r.partidas === 1 ? 'partida' : 'partidas'], ['mvps', String(r.mvps), '× 1º'], ['dois', String(r.dois), '× 2º'], ['tres', String(r.tres), '× 3º']];
+const factsCustom = (r) => [['nota', fmt2(r.nota), 'pontos por partida', true], ['partidas', String(r.partidas), r.partidas === 1 ? 'partida' : 'partidas'], ['dez', String(r.dez), '× último'], ['nove', String(r.nove), '× penúltimo']];
+spot('spot-flex-worst', 'ranking', 'partidas', (rows) => titulares(rows).pior, factsFlex);
+spot('spot-flex-best', 'ranking', 'partidas', (rows) => titulares(rows).melhor, factsBest, 'Sem dados suficientes');
+spot('spot-custom-worst', 'ranking_aram', 'aram', (rows) => titulares(rows).pior, factsCustom);
+spot('spot-custom-best', 'ranking_aram', 'aram', (rows) => titulares(rows).melhor, factsBest, 'Sem dados suficientes');
+function spotTag(name, id, papel, [fim, andamento]) {
+  dash.draw(name, (t) => {
+    const s = rankingDaSemana(id);
+    if (!s || !s.rows.length) { t.textContent = '—'; return; }
+    const base = fimTemporada(s.w) < hojeBRT() ? fim : andamento;
+    t.textContent = titulares(s.rows).provisorio ? base + ' · provisório' : base;
+  });
+}
+spotTag('spot-flex-worst-tag', 'ranking', 'pior', ['MerdaVP da Flex', 'Pior da Flex até agora']);
+spotTag('spot-flex-best-tag', 'ranking', 'melhor', ['MVP da Flex', 'MVP da Flex até agora']);
+spotTag('spot-custom-worst-tag', 'ranking_aram', 'pior', ['MerdaVP do ARAM', 'Pior do ARAM até agora']);
+spotTag('spot-custom-best-tag', 'ranking_aram', 'melhor', ['MVP do ARAM', 'MVP do ARAM até agora']);
 
 /* ---------- tabelas ---------- */
-function tabela(name, id, dataset, cols) {
+function tabela(name, id, dataset) {
   dash.draw(name, (tb) => {
     const s = rankingDaSemana(id);
     tb.replaceChildren();
     if (!s) return;
-    if (!s.rows.length) { const tr = el('tr'); const td = el('td', 'l muted', 'Nenhuma partida nesta semana.'); td.colSpan = 9; tr.append(td); tb.append(tr); return; }
-    const max = Math.max(3, ...s.rows.map((r) => r.nota));
+    const COLS = 11;
+    if (!s.rows.length) { const tr = el('tr'); const td = el('td', 'l muted', 'Nenhuma partida nesta temporada.'); td.colSpan = COLS; tr.append(td); tb.append(tr); return; }
+    const min = Number(cfg().minimo_partidas) || 10;
+    const t = titulares(s.rows);
+    const max = Math.max(3, ...s.rows.map((r) => Math.abs(r.nota)));
+    let sep = false;
     for (const r of s.rows) {
-      const tr = el('tr', r.lugar === 1 ? 'first' : null);
+      if (!r.efetivo && !sep) {
+        sep = true;
+        const tr = el('tr', 'sepr'); const td = el('td', 'l', `Provisórios · ficam de fora da premiação e da punição até ${min} partidas`); td.colSpan = COLS; tr.append(td); tb.append(tr);
+      }
+      const ehPior = !t.provisorio && r === t.pior, ehMelhor = !t.provisorio && r === t.melhor;
+      const tr = el('tr', ehPior ? 'first' : ehMelhor ? 'mvprow' : !r.efetivo ? 'prov' : null);
       tr.dataset.key = `${enc(r.semana)},${enc(r.jogador)}`;
-      tr.append(el('td', 'l rk', r.lugar === 1 ? '💩' : String(r.lugar)));
+      tr.append(el('td', 'l rk', !r.efetivo ? '—' : ehPior ? '💩' : ehMelhor ? '🏅' : String(r.lugar)));
       const who = el('td', 'l'); const pl = el('div', 'pl');
       const cid = maisJogado(dataset, r.semana, r.jogador);
-      const nm = el('div'); nm.append(el('b', null, r.jogador), el('small', null, cid != null ? champName(cid) : ''));
+      const nm = el('div'); const b = el('b', null, r.jogador);
+      if (!r.efetivo) { const chip = el('span', 'prov-chip', `${r.partidas}/${min}`); chip.title = `Provisório: faltam ${r.faltam} ${r.faltam === 1 ? 'partida' : 'partidas'} para ser efetivado`; b.append(chip); }
+      nm.append(b, el('small', null, cid != null ? champName(cid) : ''));
       pl.append(icon(cid), nm);
       const go = el('button', 'linkish'); go.type = 'button'; go.title = `Ver perfil de ${r.jogador}`;
       go.onclick = () => { window.mvp.fila = dataset === 'aram' ? 'personalizada' : 'flex'; verPerfil(r.jogador); };
       go.append(pl); who.append(go); tr.append(who);
       tr.append(el('td', null, String(r.partidas)));
-      cols.forEach(([f, cls]) => { const td = el('td'); td.append(el('span', 'cnt' + (r[f] ? ' ' + cls : ''), String(r[f]))); tr.append(td); });
-      const mv = el('td'); mv.append(el('span', 'cnt' + (r.mvps ? ' mvp1' : ''), String(r.mvps))); tr.append(mv);
+      [['dez', 'c10'], ['nove', 'c9'], ['oito', 'c8'], ['tres', 't3'], ['dois', 't2'], ['mvps', 't1']].forEach(([f, cls]) => {
+        const td = el('td'); td.append(el('span', 'cnt' + (r[f] ? ' ' + cls : ''), String(r[f]))); tr.append(td);
+      });
       tr.append(el('td', null, String(r.pontos)));
       const sc = el('td', 'r'); const pp = el('div', 'ppp');
-      const bar = el('i'); bar.style.width = `${Math.max(2, (r.nota / max) * 80)}px`;
+      const bar = el('i', r.nota < 0 ? 'neg' : null); bar.style.width = `${Math.max(2, (Math.abs(r.nota) / max) * 80)}px`;
       pp.append(bar, el('b', null, fmt2(r.nota))); sc.append(pp); tr.append(sc);
       tb.append(tr);
     }
   });
 }
-tabela('tabela-flex', 'ranking', 'partidas', [['dez', 'c10'], ['nove', 'c9'], ['oito', 'c8']]);
-tabela('tabela-custom', 'ranking_aram', 'aram', [['seis', 'c10'], ['cinco', 'c9'], ['quatro', 'c8']]);
+tabela('tabela-flex', 'ranking', 'partidas');
+tabela('tabela-custom', 'ranking_aram', 'aram');
 
 /* ---------- partidas com placar ---------- */
 function badgeClass(pos, n) {
   const doFim = n - pos;
   if (pos === 1) return 'b1';
+  if (pos === 2) return 'b2';
+  if (pos === 3) return 'b3';
   if (doFim === 0) return 'b10';
   if (doFim === 1) return 'b9';
   if (doFim === 2) return 'b8';
@@ -1297,7 +1386,7 @@ function partidasDraw(name, dataset, label, linkFn) {
     const w = semanaAtual();
     const mine = new Map();
     for (const r of g.data) if (r.semana === w) { if (!mine.has(r.partida)) mine.set(r.partida, []); mine.get(r.partida).push(r); }
-    if (!mine.size) { box.append(el('div', 'empty', 'Nenhuma partida nesta semana.')); return; }
+    if (!mine.size) { box.append(el('div', 'empty', 'Nenhuma partida nesta temporada.')); return; }
     const board = new Map();
     for (const r of pl.data) if (mine.has(String(r.partida))) { const k = String(r.partida); if (!board.has(k)) board.set(k, []); board.get(k).push(r); }
     const list = [...mine.entries()].sort((a, b) => (a[1][0].inicio < b[1][0].inicio ? 1 : -1));
@@ -1317,13 +1406,15 @@ function matchCard(id, ps, all, dataset, label, linkFn) {
   const s = el('summary');
   s.append(el('span', 'stripe'));
   const res = el('div', 'res'); const [dd, hh] = f.inicio.split(' ');
-  res.append(el('b', null, win ? 'Vitória' : 'Derrota'), el('span', null, `${label(f)} · ${Math.round(Number(f.minutos))} min`), el('span', null, `${dia(dd)} às ${hh}`));
+  const lab = el('span'); const nump = el('span', 'nump', `#${f.numero}`); nump.title = 'Número da partida';
+  lab.append(nump, `${label(f)} · ${Math.round(Number(f.minutos))} min`);
+  res.append(el('b', null, win ? 'Vitória' : 'Derrota'), lab, el('span', null, `${dia(dd)} às ${hh}`));
   s.append(res);
   const score = el('div', 'score');
   if (all.length) score.append(el('span', 'us', String(sum(us, 'abates'))), el('span', 'x', 'x'), el('span', 'them', String(sum(them, 'abates'))));
   const ROLE_ORD = { TOP: 0, JG: 1, MID: 2, ADC: 3, SUP: 4 };
   const ordem = (arr) => arr.slice().sort((a, b) => (ROLE_ORD[a.role] ?? 9) - (ROLE_ORD[b.role] ?? 9) || Number(a.posicao) - Number(b.posicao));
-  const timeSum = (arr, cls) => {
+  const timeSum = (arr, cls, venceu) => {
     const t = el('div', 'tsum ' + cls);
     ordem(arr).forEach((p) => {
       const fc = el('div', 'face2' + (p.grupo ? ' us' : ''));
@@ -1335,10 +1426,12 @@ function matchCard(id, ps, all, dataset, label, linkFn) {
       fc.append(ic, el('span', 'fn', p.grupo || p.jogador));
       t.append(fc);
     });
-    return t;
+    const side = el('div', 'tside ' + (cls === 'nosso' ? 'esq' : 'dir'));
+    side.append(el('div', 'tres ' + (venceu ? 'v' : 'd'), venceu ? 'Vitória' : 'Derrota'), t);
+    return side;
   };
   const teams = el('div', 'teams-sum');
-  if (all.length) teams.append(timeSum(us, 'nosso'), score, timeSum(them, 'deles'));
+  if (all.length) teams.append(timeSum(us, 'nosso', win), score, timeSum(them, 'deles', !win));
   else {
     const t = el('div', 'tsum nosso');
     ps.forEach((p) => { const fc = el('div', 'face2 us'); const ic = el('div', 'face'); ic.append(icon(p.campeao_id), el('span', 'badge ' + badgeClass(Number(p.posicao), n), `${p.posicao}º`)); fc.append(ic, el('span', 'fn', p.jogador)); t.append(fc); });
@@ -1372,8 +1465,8 @@ function matchCard(id, ps, all, dataset, label, linkFn) {
     });
     dc.append(bars); bd.append(dc);
     const foot = el('div', 'board-foot');
-    foot.append(el('span', null, 'A colocação (1º a ' + n + 'º) vem da nota de desempenho de cada jogador na partida.'));
-    const link = linkFn(id);
+    foot.append(el('span', null, `Partida #${f.numero} · a colocação (1º a ${n}º) vem da nota de desempenho de cada jogador.`));
+    const link = linkFn(id, f);
     if (link) { const a = el('a', null, 'Abrir no League of Graphs ↗'); a.href = link; a.target = '_blank'; a.rel = 'noopener'; foot.append(a); }
     bd.append(foot);
     d.append(bd);
@@ -1381,24 +1474,30 @@ function matchCard(id, ps, all, dataset, label, linkFn) {
   return d;
 }
 
-partidasDraw('partidas-flex', 'partidas', (f) => f.tipo, (id) => `https://www.leagueofgraphs.com/match/br/${String(id).replace(/^BR1_/, '')}`);
+partidasDraw('partidas-flex', 'partidas', (f) => f.tipo, (id, f) => (f && f.origem === 'personalizada' ? null : `https://www.leagueofgraphs.com/match/br/${String(id).replace(/^BR1_/, '')}`));
 partidasDraw('partidas-custom', 'aram', (f) => `${f.modo} · ${f.mapa}`, () => null);
 
 /* ---------- galeria ---------- */
+function cartaoTemporada(r, dataset, src) {
+  const andamento = !Number(r.encerrada);
+  const c = el('div', 'card wk' + (andamento ? ' open' : ''));
+  c.append(icon(maisJogado(dataset, r.semana, r.jogador)));
+  const tx = el('div'); const where = `semana=${enc(r.semana)}`;
+  tx.append(el('div', 'when', `Temporada ${numTemporada(r.semana)} · ${dia(r.semana)} a ${dia(fimTemporada(r.semana))}${andamento ? ' · em andamento' : ''}${Number(r.provisorio) ? ' · provisório' : ''}`));
+  const n = el('div', 'n', r.jogador); n.dataset.source = src; n.dataset.field = 'jogador'; n.dataset.where = where;
+  const v = el('div', 'v'); const b = el('b', null, fmt2(r.nota)); b.dataset.source = src; b.dataset.field = 'nota'; b.dataset.where = where;
+  v.append(b, ` pts/partida em ${r.partidas} ${r.partidas === 1 ? 'partida' : 'partidas'}`);
+  tx.append(n, v);
+  if (r.mvp_jogador) tx.append(el('div', 'v', `MVP: ${r.mvp_jogador} · ${fmt2(r.mvp_nota)} pts/partida em ${r.mvp_partidas} ${r.mvp_partidas === 1 ? 'partida' : 'partidas'}`));
+  c.append(tx);
+  return c;
+}
 dash.draw('historico', (box) => {
   const g = dash.data('merdavps');
   box.replaceChildren();
   if (g.status !== 'ok' || !g.data) { box.textContent = '—'; return; }
-  for (const r of g.data.slice().reverse()) {
-    const c = el('div', 'card wk' + (Number(r.encerrada) ? '' : ' open'));
-    c.append(icon(maisJogado('partidas', r.semana, r.jogador)));
-    const tx = el('div');
-    tx.append(el('div', 'when', `${dia(r.semana)} a ${dia(fimSemana(r.semana))}${Number(r.encerrada) ? '' : ' · em andamento'}`));
-    const n = el('div', 'n', r.jogador); n.dataset.source = 'merdavps'; n.dataset.field = 'jogador'; n.dataset.where = `semana=${enc(r.semana)}`;
-    const v = el('div', 'v'); const b = el('b', null, fmt2(r.nota)); b.dataset.source = 'merdavps'; b.dataset.field = 'nota'; b.dataset.where = `semana=${enc(r.semana)}`;
-    v.append(b, ` pts/partida em ${r.partidas} partidas`);
-    tx.append(n, v); c.append(tx); box.append(c);
-  }
+  if (!g.data.length) { box.append(el('div', 'empty', 'Nenhuma partida registrada ainda.')); return; }
+  for (const r of g.data.slice().reverse()) box.append(cartaoTemporada(r, 'partidas', 'merdavps'));
 });
 dash.draw('contagem', (box) => {
   const g = dash.data('merdavps');
@@ -1406,7 +1505,7 @@ dash.draw('contagem', (box) => {
   if (g.status !== 'ok' || !g.data) return;
   const last = new Map();
   for (const r of g.data) if (Number(r.vezes_no_ano) > 0) last.set(r.jogador, r);
-  if (!last.size) { box.append(el('div', 'empty', 'Nenhuma semana encerrada ainda.')); return; }
+  if (!last.size) { box.append(el('div', 'empty', 'Nenhuma temporada encerrada ainda.')); return; }
   for (const [j, r] of [...last.entries()].sort((a, b) => b[1].vezes_no_ano - a[1].vezes_no_ano)) {
     const t = el('span', 'tl'); t.append(el('b', null, j));
     const pips = el('span', 'pips'); for (let i = 0; i < 5; i++) pips.append(el('i', i < r.vezes_no_ano ? 'on' : null));
@@ -1415,21 +1514,11 @@ dash.draw('contagem', (box) => {
   }
 });
 dash.draw('historico-custom', (box) => {
-  const g = dash.data('ranking_aram');
+  const g = dash.data('merdavps_aram');
   box.replaceChildren();
   if (g.status !== 'ok' || !g.data) { box.textContent = '—'; return; }
-  const piores = g.data.filter((r) => r.lugar === 1).reverse();
-  if (!piores.length) { box.append(el('div', 'empty', 'Nenhuma personalizada registrada ainda.')); return; }
-  for (const r of piores) {
-    const c = el('div', 'card wk' + (fimSemana(r.semana) >= hojeBRT() ? ' open' : ''));
-    c.append(icon(maisJogado('aram', r.semana, r.jogador)));
-    const tx = el('div'); const where = `semana=${enc(r.semana)}&jogador=${enc(r.jogador)}`;
-    tx.append(el('div', 'when', `${dia(r.semana)} a ${dia(fimSemana(r.semana))}`));
-    const n = el('div', 'n', r.jogador); n.dataset.source = 'ranking_aram'; n.dataset.field = 'jogador'; n.dataset.where = where;
-    const v = el('div', 'v'); const b = el('b', null, fmt2(r.nota)); b.dataset.source = 'ranking_aram'; b.dataset.field = 'nota'; b.dataset.where = where;
-    v.append(b, ` pts/partida em ${r.partidas} partidas`);
-    tx.append(n, v); c.append(tx); box.append(c);
-  }
+  if (!g.data.length) { box.append(el('div', 'empty', 'Nenhuma personalizada registrada ainda.')); return; }
+  for (const r of g.data.slice().reverse()) box.append(cartaoTemporada(r, 'aram', 'merdavps_aram'));
 });
 
 /* ================= NOVO: cálculos das estatísticas ================= */
@@ -1439,8 +1528,8 @@ const r2 = (v) => Math.round(v * 100) / 100;
 
 dash.calc('premios', {
   inputs: ['placar'],
-  title: 'Awards da semana',
-  description: 'Por semana e tipo de partida, entre os jogadores do grupo (preferindo quem jogou 2 ou mais): negativos (pior campeão, pior rota, mais mortes, menos visão, menos dano, menos participação) e positivos (melhor colocação, mais dano, mais assistências, mais visão, mais abates), por média por partida.',
+  title: 'Awards da temporada',
+  description: 'Por temporada e tipo de partida, entre os jogadores do grupo (preferindo quem jogou 2 ou mais): negativos (pior campeão, pior rota, mais mortes, menos visão, menos dano, menos participação) e positivos (melhor colocação, mais dano, mais assistências, mais visão, mais abates), por média por partida.',
   fn: (placar) => {
     const g = placar.filter((r) => r.grupo);
     const out = [];
@@ -1504,7 +1593,7 @@ function agrupa(rows, keyFn) {
 dash.calc('perfis', {
   inputs: ['placar'],
   title: 'Perfil de cada jogador',
-  description: 'Por tipo de partida e jogador do grupo, desde 29/10: partidas, vitórias, KDA, colocação média, MVPs e dano médio.',
+  description: 'Por tipo de partida e jogador do grupo, desde 16/11: partidas, vitórias, KDA, colocação média, MVPs e dano médio.',
   fn: (placar) => {
     const out = [];
     for (const [k, rs] of agrupa(placar.filter((r) => r.grupo), (r) => r.fila + '|' + r.grupo)) {
@@ -1611,7 +1700,7 @@ const PREMIOS = [
   ['pior_campeao', 'Pior campeão', 'bad', (r) => champName(r.campeao_id), null],
   ['pior_rota', 'Pior rota', 'bad', (r) => r.jogador, (r) => ['colocação média ', fmt1(r.valor) + 'º']],
   ['mortes', 'Doador de abates', 'bad', (r) => r.jogador, (r) => ['', fmt1(r.valor) + ' mortes por partida']],
-  ['visao', 'Cego da semana', 'bad', (r) => r.jogador, (r) => ['', fmt2(r.valor) + ' de visão por minuto']],
+  ['visao', 'Cego da temporada', 'bad', (r) => r.jogador, (r) => ['', fmt2(r.valor) + ' de visão por minuto']],
   ['pacifista', 'Pacifista', 'bad', (r) => r.jogador, (r) => ['só ', fmtK(Math.round(r.valor)) + ' de dano por partida']],
   ['turista', 'Turista', 'bad', (r) => r.jogador, (r) => ['participou de ', Math.round(r.valor) + '% dos abates']],
   // positivos
@@ -1628,7 +1717,7 @@ function premiosDraw(name, fila) {
     if (g.status !== 'ok' || !g.data) { box.textContent = '—'; return; }
     const w = semanaAtual();
     const rows = g.data.filter((r) => r.semana === w && r.fila === fila);
-    if (!rows.length) { box.append(el('div', 'empty', 'Nenhuma partida nesta semana.')); return; }
+    if (!rows.length) { box.append(el('div', 'empty', 'Nenhuma partida nesta temporada.')); return; }
     for (const [grupoCls, rotulo] of [['bad', 'Zueira'], ['good', 'Mérito']]) {
       const grid = el('div', 'awards');
       for (const [premio, titulo, cls, whoFn, valFn] of PREMIOS) {
@@ -1660,6 +1749,40 @@ function premiosDraw(name, fila) {
 }
 premiosDraw('premios-flex', 'flex');
 premiosDraw('premios-custom', 'personalizada');
+
+/* ================= NOVO: premiação e punição ================= */
+dash.draw('premiacao', (box) => {
+  box.replaceChildren();
+  const w = semanaAtual();
+  const f = rankingDaSemana('ranking'), a = rankingDaSemana('ranking_aram');
+  if (!w || !f || !a) { box.textContent = '—'; return; }
+  const c = cfg(), min = Number(c.minimo_partidas) || 10, insc = (c.jogadores || []).length;
+  const fim = fimTemporada(w), encerrada = fim < hojeBRT();
+  const tf = titulares(f.rows), ta = titulares(a.rows);
+  const defF = !tf.provisorio, defA = !ta.provisorio; // 2 efetivados ou mais = MVP e MerdaVP definidos
+  const nPuni = 2; // os MerdaVPs da Flex e do ARAM pagam a punição
+  const pool = Number(c.inscricao) * insc + Number(c.punicao) * nPuni;
+  const ambos = defF && defA;
+  const h = el('div', 'prize-h');
+  h.append(el('b', null, `Premiação · Temporada ${numTemporada(w)}`), el('span', null, `${dia(w)} a ${dia(fim)} · ${encerrada ? 'resultado final' : 'parcial, muda até o fim da temporada'}`));
+  const cell = (lab, val, sub, cls) => { const d = el('div', 'prize-cell' + (cls ? ' ' + cls : '')); d.append(el('div', 'lab', lab), el('div', 'val', val)); if (sub) d.append(el('div', 'sub', sub)); return d; };
+  const nome = (r, t) => (r ? r.jogador : '—');
+  const sub = (r, t) => (!r ? 'ainda sem dados' : t.provisorio ? `${fmt2(r.nota)} pts/partida · provisório` : `${fmt2(r.nota)} pts/partida em ${r.partidas} ${r.partidas === 1 ? 'partida' : 'partidas'}`);
+  const grid = el('div', 'prize-grid');
+  grid.append(
+    cell('Prêmio total', reais(pool), `${insc} inscritos × ${reais(c.inscricao)} + ${reais(c.punicao * nPuni)} dos MerdaVPs`, 'gold'),
+    cell('MVP da Flex', nome(tf.melhor), sub(tf.melhor, tf) + (defF && defA ? ` · leva ${reais(pool / 2)}` : defF ? ' · divide o prêmio com o MVP do ARAM' : ''), 'good'),
+    cell('MVP do ARAM', nome(ta.melhor), sub(ta.melhor, ta) + (defF && defA ? ` · leva ${reais(pool / 2)}` : defA ? ' · divide o prêmio com o MVP da Flex' : ''), 'good'),
+    cell('MerdaVP da Flex', nome(tf.pior), sub(tf.pior, tf) + (defF ? ` · paga +${reais(c.punicao)} no dia ${dia(diaMais(fim, 1))}` : ''), 'bad'),
+    cell('MerdaVP do ARAM', nome(ta.pior), sub(ta.pior, ta) + (defA ? ` · paga +${reais(c.punicao)} no dia ${dia(diaMais(fim, 1))}` : ''), 'bad'),
+  );
+  const p = el('p', null, `Inscrição: pix de ${reais(c.inscricao)} para o admin até ${dia(diaMais(w, 6))}, na primeira semana da temporada. Os MerdaVPs da Flex e do ARAM pagam mais ${reais(c.punicao)} no dia ${dia(diaMais(fim, 1))}, depois de definido o pior. O prêmio é dividido entre o MVP da Flex e o MVP do ARAM. Quem não chegar a ${min} partidas num ranking fica fora da premiação e da punição dele, e a inscrição vira doação. MVP e MerdaVP só são definidos quando pelo menos 2 jogadores estão efetivados no ranking.`);
+  box.append(h, grid, p);
+});
+dash.draw('regras-anuladas', (p) => {
+  const n = (cfg().anuladas || []);
+  p.textContent = n.length ? `Partidas anuladas até agora: ${n.map((x) => '#' + x).join(', ')}.` : 'Nenhuma partida anulada até agora.';
+});
 
 /* ================= NOVO: jogadores ================= */
 window.mvp.fila = window.mvp.fila || 'flex';
@@ -1885,7 +2008,7 @@ function ultimaPartida() {
   for (const r of g.data) if (!last || r.inicio > last.inicio || (r.inicio === last.inicio && String(r.partida) > String(last.partida))) last = r;
   return { id: String(last.partida), fila: last.fila, rows: g.data.filter((r) => String(r.partida) === String(last.partida)) };
 }
-const LINK_FLEX = (id) => `https://www.leagueofgraphs.com/match/br/${String(id).replace(/^BR1_/, '')}`;
+const LINK_FLEX = (id, f) => (f && f.origem === 'personalizada' ? null : `https://www.leagueofgraphs.com/match/br/${String(id).replace(/^BR1_/, '')}`);
 dash.draw('dados-ate', (v) => {
   const u = ultimaPartida();
   if (!u) { v.textContent = '—'; return; }
@@ -1900,9 +2023,10 @@ dash.draw('ultima-h', (box) => {
   const win = Number(f.vitoria) === 1;
   const [d, h] = f.inicio.split(' ');
   const left = el('div');
-  left.append(el('div', 'eyebrow', 'Partida mais recente'), el('div', 'big ' + (win ? 'win' : 'loss'), win ? 'Vitória' : 'Derrota'));
-  const nGrupo = new Set(u.rows.filter((r) => r.grupo && r.time === f.time).map((r) => r.grupo)).size;
-  const tipo = u.fila === 'flex' ? `Flex com ${nGrupo}` : `Personalizada ${u.rows.length / 2}x${u.rows.length / 2}`;
+  left.append(el('div', 'eyebrow', `Partida mais recente · #${f.numero}`), el('div', 'big ' + (win ? 'win' : 'loss'), win ? 'Vitória' : 'Derrota'));
+  const nGrupo = new Set(u.rows.filter((r) => r.grupo && (f.origem === 'personalizada' || r.time === f.time)).map((r) => r.grupo)).size;
+  const tipo = u.fila !== 'flex' ? `Personalizada ARAM ${u.rows.length / 2}x${u.rows.length / 2}`
+    : f.origem === 'personalizada' ? `Personalizada 5x5 com ${nGrupo} (vale como flex)` : `Flex com ${nGrupo}`;
   box.append(left, el('div', 'meta', `${tipo} · ${dia(d)} às ${h} · ${Math.round(Number(f.minutos))} min`));
 });
 function pontosNaPartida(u) {
@@ -1933,7 +2057,7 @@ dash.draw('ultima-pontos', (box) => {
     const c = el('div', `sc p${pts}`);
     c.append(icon(r.campeao_id));
     const tx = el('div'); tx.style.minWidth = '0';
-    const pe = el('div', 'pts', pts > 0 ? `+${pts} ${pts === 1 ? 'ponto' : 'pontos'}` : pts < 0 ? `${pts} ponto · MVP` : 'sem pontos');
+    const pe = el('div', 'pts', pts > 0 ? `+${pts} ${pts === 1 ? 'ponto' : 'pontos'}` : pts < 0 ? `${pts} ${pts === -1 ? 'ponto' : 'pontos'} · ${r.posicao}º lugar` : 'sem pontos');
     if (pr) { pe.dataset.source = ds; pe.dataset.field = 'pontos'; pe.dataset.where = `partida=${enc(u.id)}&jogador=${enc(r.grupo)}`; }
     tx.append(el('div', 'nm', r.grupo), el('div', 'ps', `${r.posicao}º de ${r.jogadores} · ${champName(r.campeao_id)} · ${r.abates}/${r.mortes}/${r.assist}`), pe);
     c.append(tx);
@@ -1945,7 +2069,7 @@ dash.draw('ultima-pontos', (box) => {
 dash.draw('hoje-label', (s) => {
   const u = ultimaPartida();
   if (!u) { s.textContent = '—'; return; }
-  s.textContent = `${u.fila === 'flex' ? 'Flex' : 'Personalizadas'} de ${dia(u.rows[0].dia)}, somando as partidas do dia.`;
+  s.textContent = `${u.fila === 'flex' ? 'Flex' : 'ARAM'} de ${dia(u.rows[0].dia)}, somando as partidas do dia.`;
 });
 dash.draw('hoje', (tb) => {
   const u = ultimaPartida();
@@ -2042,19 +2166,19 @@ dash.calc('titulos', {
 dash.calc('titulos_contagem', {
   inputs: ['titulos', 'premios'],
   title: 'Coleção de títulos',
-  description: 'Quantas vezes cada jogador ganhou cada título, por tipo de partida. Inclui os títulos de award: quem leva um award na semana ganha o título correspondente (o Pior campeão vai para quem jogou com ele; a Pior rota não dá título).',
+  description: 'Quantas vezes cada jogador ganhou cada título, por tipo de partida. Inclui os títulos de award: quem leva um award na temporada ganha o título correspondente (o Pior campeão vai para quem jogou com ele; a Pior rota não dá título).',
   fn: (titulos, premios) => {
     const AW = {
-      melhor: ['Melhor da Semana', 'bom', '🏆', 'Award: melhor colocação média da semana'],
-      dano: ['Rei do Dano', 'bom', '👊', 'Award: mais dano por partida na semana'],
-      assist: ['Garçom da Semana', 'bom', '🍽️', 'Award: mais assistências por partida na semana'],
-      olho: ['Farol da Semana', 'bom', '🔭', 'Award: mais visão por minuto na semana'],
-      abates: ['Matador da Semana', 'bom', '🔪', 'Award: mais abates por partida na semana'],
-      pior_campeao: ['Campeão Amaldiçoado', 'ruim', '🧿', 'Award: jogou o pior campeão da semana'],
-      mortes: ['Feeder da Semana', 'ruim', '🍖', 'Award: mais mortes por partida na semana'],
-      visao: ['Cego da Semana', 'ruim', '🦇', 'Award: menos visão por minuto na semana'],
-      pacifista: ['Pacifista da Semana', 'ruim', '☮️', 'Award: menos dano por partida na semana'],
-      turista: ['Turista da Semana', 'ruim', '🧳', 'Award: menor participação em abates na semana'],
+      melhor: ['Melhor da Temporada', 'bom', '🏆', 'Award: melhor colocação média da temporada'],
+      dano: ['Rei do Dano', 'bom', '👊', 'Award: mais dano por partida na temporada'],
+      assist: ['Garçom da Temporada', 'bom', '🍽️', 'Award: mais assistências por partida na temporada'],
+      olho: ['Farol da Temporada', 'bom', '🔭', 'Award: mais visão por minuto na temporada'],
+      abates: ['Matador da Temporada', 'bom', '🔪', 'Award: mais abates por partida na temporada'],
+      pior_campeao: ['Campeão Amaldiçoado', 'ruim', '🧿', 'Award: jogou o pior campeão da temporada'],
+      mortes: ['Feeder da Temporada', 'ruim', '🍖', 'Award: mais mortes por partida na temporada'],
+      visao: ['Cego da Temporada', 'ruim', '🦇', 'Award: menos visão por minuto na temporada'],
+      pacifista: ['Pacifista da Temporada', 'ruim', '☮️', 'Award: menos dano por partida na temporada'],
+      turista: ['Turista da Temporada', 'ruim', '🧳', 'Award: menor participação em abates na temporada'],
     };
     const m = new Map();
     const conta = (fila, jogador, id, titulo, tipo, icone, descricao) => {
@@ -2131,16 +2255,16 @@ dash.draw('perfil-titulos-partidas', (box) => {
 
 /* ================= NOVO: títulos nos cartões do pior e do MVP ================= */
 const AW_TITULOS = {
-  melhor: ['Melhor da Semana', 'bom', '🏆', 'Award: melhor colocação média da semana'],
-  dano: ['Rei do Dano', 'bom', '👊', 'Award: mais dano por partida na semana'],
-  assist: ['Garçom da Semana', 'bom', '🍽️', 'Award: mais assistências por partida na semana'],
-  olho: ['Farol da Semana', 'bom', '🔭', 'Award: mais visão por minuto na semana'],
-  abates: ['Matador da Semana', 'bom', '🔪', 'Award: mais abates por partida na semana'],
-  pior_campeao: ['Campeão Amaldiçoado', 'ruim', '🧿', 'Award: jogou o pior campeão da semana'],
-  mortes: ['Feeder da Semana', 'ruim', '🍖', 'Award: mais mortes por partida na semana'],
-  visao: ['Cego da Semana', 'ruim', '🦇', 'Award: menos visão por minuto na semana'],
-  pacifista: ['Pacifista da Semana', 'ruim', '☮️', 'Award: menos dano por partida na semana'],
-  turista: ['Turista da Semana', 'ruim', '🧳', 'Award: menor participação em abates na semana'],
+  melhor: ['Melhor da Temporada', 'bom', '🏆', 'Award: melhor colocação média da temporada'],
+  dano: ['Rei do Dano', 'bom', '👊', 'Award: mais dano por partida na temporada'],
+  assist: ['Garçom da Temporada', 'bom', '🍽️', 'Award: mais assistências por partida na temporada'],
+  olho: ['Farol da Temporada', 'bom', '🔭', 'Award: mais visão por minuto na temporada'],
+  abates: ['Matador da Temporada', 'bom', '🔪', 'Award: mais abates por partida na temporada'],
+  pior_campeao: ['Campeão Amaldiçoado', 'ruim', '🧿', 'Award: jogou o pior campeão da temporada'],
+  mortes: ['Feeder da Temporada', 'ruim', '🍖', 'Award: mais mortes por partida na temporada'],
+  visao: ['Cego da Temporada', 'ruim', '🦇', 'Award: menos visão por minuto na temporada'],
+  pacifista: ['Pacifista da Temporada', 'ruim', '☮️', 'Award: menos dano por partida na temporada'],
+  turista: ['Turista da Temporada', 'ruim', '🧳', 'Award: menor participação em abates na temporada'],
 };
 function titulosDaSemana(jogador, semana, fila, tipo, limite) {
   const out = [];
@@ -2177,8 +2301,8 @@ function spotTitulos(name, pick, tipo) {
     }
   });
 }
-spotTitulos('spot-flex-worst-titulos', (rows) => rows[0], 'ruim');
-spotTitulos('spot-flex-best-titulos', (rows) => rows.filter((r) => r.mvps > 0).sort((a, b) => b.mvps - a.mvps || a.nota - b.nota || a.partidas - b.partidas)[0] || null, 'bom');
+spotTitulos('spot-flex-worst-titulos', (rows) => titulares(rows).pior, 'ruim');
+spotTitulos('spot-flex-best-titulos', (rows) => titulares(rows).melhor, 'bom');
 
 /* ================= NOVO: por que ficaram lá embaixo ================= */
 function motivos(r, rows) {

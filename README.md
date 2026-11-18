@@ -1,6 +1,6 @@
 # MerdaVP
 
-Ranking do pior da semana do grupo no League of Legends.
+Ranking mensal do grupo no League of Legends: MVP e MerdaVP de cada temporada.
 
 Site: https://defendermv.github.io/merdavp/
 
@@ -12,4 +12,7 @@ Site: https://defendermv.github.io/merdavp/
 - **Amigos enviando partidas:** veja [GUIA-AMIGOS.md](GUIA-AMIGOS.md) e o instalador `instalar_amigo.ps1`.
 - **Chave da Riot:** guardada em *Settings → Secrets and variables → Actions* como `RIOT_API_KEY`. Nunca vai para o código.
 - **Página:** o código fica em `page/index.html`; `site/runtime.js` faz ela funcionar como site estático.
-- **Regras e jogadores:** `players.json` (Riot IDs, data de início, regra do MVP).
+- **Regras e jogadores:** `players.json` (Riot IDs, início das temporadas, mínimo de partidas, valores do pix, partidas anuladas).
+- **Temporadas:** mensais, do dia 8 ao dia 7 do mês seguinte (a primeira vai de 16/11/2026 a 07/12/2026). Os três últimos de cada partida levam +1/+2/+3 pontos e os três primeiros tiram 3/2/1; menos pontos por partida = MVP, mais = MerdaVP. Flex e ARAM têm rankings separados. Quem tem menos de 10 partidas na temporada fica como provisório.
+- **Personalizadas:** 5x5 na Summoner's Rift com 3 ou mais do grupo valem como flex; as de ARAM valem só no ranking do ARAM.
+- **Número das partidas:** cada partida válida recebe um número fixo (`numeracao.json`), mostrado no placar. Para anular uma partida (queda de jogador etc.), coloque o número em `partidas_anuladas` no `players.json`: ela sai dos rankings, mas o número continua reservado.

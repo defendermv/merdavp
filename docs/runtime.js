@@ -2,7 +2,7 @@
    Reproduz o pedaço da API `dash` que a página usa: data, calc, draw, setLink.
    Carrega os arquivos de data/*.json e recarrega a cada 2 minutos. */
 (function () {
-  const SOURCES = { partidas: 'data/partidas.json', aram: 'data/aram.json', placar: 'data/placar.json', campeoes: 'data/campeoes.json' };
+  const SOURCES = { partidas: 'data/partidas.json', aram: 'data/aram.json', placar: 'data/placar.json', campeoes: 'data/campeoes.json', config: 'data/config.json' };
   const RELOAD_MS = 2 * 60 * 1000;
   const raw = {};      // id -> rows
   const rawText = {};  // id -> texto, para saber se mudou

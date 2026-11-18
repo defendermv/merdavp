@@ -10,7 +10,7 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 DOCS = HERE / "docs"
-FILES = ("partidas", "aram", "placar", "campeoes")
+FILES = ("partidas", "aram", "placar", "campeoes", "config")
 
 HEAD = """<!doctype html>
 <html lang="pt-BR">
@@ -18,13 +18,13 @@ HEAD = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MerdaVP</title>
-<meta name="description" content="Ranking do pior da semana do grupo no League of Legends.">
+<meta name="description" content="Ranking mensal do grupo no League of Legends: MVP e MerdaVP da temporada.">
 <link rel="icon" type="image/svg+xml" href="img/icone.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon.png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <meta name="theme-color" content="#0f161b">
 <meta property="og:title" content="MerdaVP">
-<meta property="og:description" content="Ranking do pior da semana do grupo no League of Legends.">
+<meta property="og:description" content="Ranking mensal do grupo no League of Legends: MVP e MerdaVP da temporada.">
 <meta property="og:image" content="https://defendermv.github.io/merdavp/img/og.png">
 <meta property="og:url" content="https://defendermv.github.io/merdavp/">
 <meta name="twitter:card" content="summary_large_image">

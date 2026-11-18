@@ -1,5 +1,5 @@
 {
-  "_obs": "Apelido no ranking -> Riot ID. Samuel (Imprudent07#br1) e Mannu ficam fora (jogam pouco).",
+  "_obs": "Apelido no ranking -> Riot ID. Samuel (Imprudent07#br1) fica fora (joga pouco). Mannu e Kirma entraram em 16/11/2026.",
   "players": {
     "Defender": "Defender#MVD",
     "Delevas": "Delevedove#br1",
@@ -9,10 +9,21 @@
     "ForD": "fOrD#br01",
     "Psyzg": "psyzG#br1",
     "Travesti Anão": "Travesti Anão#9999",
-    "Sutak": "SutaK#br1"
+    "Sutak": "SutaK#br1",
+    "Mannu": "MannuMONSTER#BR1",
+    "Kirma": "kirma00#br1"
   },
   "min_grupo": 3,
-  "inicio": "2026-10-29",
-  "partidas_ignoradas": [],
-  "mvp_menos_um_desde": "2026-11-12"
+  "inicio": "2026-11-16",
+  "temporada": {
+    "_obs": "Mensal. A primeira vai de 16/11/2026 a 07/12/2026; depois cada uma começa dia 8 e termina dia 7 do mês seguinte.",
+    "primeira": "2026-11-16",
+    "dia_virada": 8
+  },
+  "minimo_partidas": 10,
+  "inscricao": 10,
+  "punicao": 20,
+  "_anuladas": "Números das partidas (ou ids) tiradas da contagem por queda de jogador etc. Ex.: [12, 37]. O número continua reservado.",
+  "partidas_anuladas": [],
+  "partidas_ignoradas": []
 }
