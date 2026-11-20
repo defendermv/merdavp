@@ -1,5 +1,5 @@
 {
-  "_obs": "Apelido no ranking -> Riot ID. Samuel (Imprudent07#br1) fica fora (joga pouco). Mannu e Kirma entraram em 16/11/2026.",
+  "_obs": "Apelido no ranking -> Riot ID. Mannu e Kirma entraram em 16/11/2026. Samuel (Imprudent07#br1) entrou em 20/11/2026.",
   "players": {
     "Defender": "Defender#MVD",
     "Delevas": "Delevedove#br1",
@@ -11,7 +11,8 @@
     "Travesti Anão": "Travesti Anão#9999",
     "Sutak": "SutaK#br1",
     "Mannu": "MannuMONSTER#BR1",
-    "Kirma": "kirma00#br1"
+    "Kirma": "kirma00#br1",
+    "Samuel": "Imprudent07#br1"
   },
   "min_grupo": 3,
   "inicio": "2026-11-16",
