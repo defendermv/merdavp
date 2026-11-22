@@ -9,7 +9,10 @@
  },
  "BRAGA": {
   "riot_id": "Droga é o Braga#0333",
-  "puuid": "DPfJRsAKCgPi72sDeyXGfeOf8BlT0a8sQsGUpNKp71YcuYPTSWivOTTQ1hl0m29YxdpEJqznIewc1A"
+  "puuid": "DPfJRsAKCgPi72sDeyXGfeOf8BlT0a8sQsGUpNKp71YcuYPTSWivOTTQ1hl0m29YxdpEJqznIewc1A",
+  "extras": {
+   "Birimbaubolado#3621": "w7JdM87V_bjMSwE_vm8T1lmYoGseMMLkh270YyuE_HaBr_hzRPi7ZLF5yxQ0VfSwgrTyN2A_OXTqhg"
+  }
  },
  "Leozin": {
   "riot_id": "tiotaai#4391",

@@ -34,19 +34,31 @@ def resumo_timeline(match_id, match):
 
 
 def puuids():
+    """-> lista de (apelido, puuid), incluindo as contas extras (players.json > contas_extras)."""
     cache = json.loads(PUUIDS.read_text(encoding="utf-8")) if PUUIDS.exists() else {}
     for nick, rid in CFG["players"].items():
         if cache.get(nick, {}).get("riot_id") != rid:
             name, tag = rid.split("#")
-            cache[nick] = {"riot_id": rid, "puuid": riot.account(name, tag)["puuid"]}
+            cache[nick] = {**cache.get(nick, {}), "riot_id": rid, "puuid": riot.account(name, tag)["puuid"]}
+    extras = {n: l for n, l in CFG.get("contas_extras", {}).items() if n in CFG["players"]}
+    for nick, rids in extras.items():
+        ex = cache[nick].setdefault("extras", {})
+        for rid in rids:
+            if rid not in ex:
+                name, tag = rid.split("#")
+                ex[rid] = riot.account(name, tag)["puuid"]
+        for rid in [r for r in ex if r not in rids]:  # conta removida da config
+            del ex[rid]
     PUUIDS.write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
-    return {n: v["puuid"] for n, v in cache.items() if n in CFG["players"]}
+    out = [(n, v["puuid"]) for n, v in cache.items() if n in CFG["players"]]
+    out += [(n, pu) for n, v in cache.items() if n in CFG["players"] for pu in v.get("extras", {}).values()]
+    return out
 
 
 def main():
     start = dt.datetime.fromisoformat(CFG["inicio"]).timestamp()
     new = 0
-    for nick, pu in puuids().items():
+    for nick, pu in puuids():
         ids, offset = [], 0
         while True:  # pagina de 100 em 100
             page = riot.get(f"{riot.REGIONAL}/lol/match/v5/matches/by-puuid/{pu}/ids",

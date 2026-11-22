@@ -33,8 +33,15 @@ TIME = {100: "azul", 200: "vermelho"}
 MAPA_SR, MAPA_ARAM = 11, 12
 
 nick_of = {v["puuid"]: n for n, v in PUU.items() if n in CFG["players"]}
+# contas extras (ex.: conta nova do Braga) contam para o mesmo apelido
+for _n, _v in PUU.items():
+    if _n in CFG["players"]:
+        nick_of.update({pu: _n for pu in _v.get("extras", {}).values()})
 # o cliente do LoL usa outro código de jogador, então as personalizadas casam pelo Riot ID
 nick_of_rid = {rid.lower(): n for n, rid in CFG["players"].items()}
+for _n, _rids in CFG.get("contas_extras", {}).items():
+    if _n in CFG["players"]:
+        nick_of_rid.update({r.lower(): _n for r in _rids})
 PRIMEIRA = dt.date.fromisoformat(CFG["temporada"]["primeira"])
 VIRADA = CFG["temporada"]["dia_virada"]
 

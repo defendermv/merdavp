@@ -14,6 +14,10 @@
     "Kirma": "kirma00#br1",
     "Samuel": "Imprudent07#br1"
   },
+  "contas_extras": {
+    "_obs": "Contas adicionais de um jogador: tudo que rolar nelas conta para o mesmo perfil. Apelido no ranking -> lista de Riot IDs. Braga: conta principal suspensa em 22/11/2026.",
+    "BRAGA": ["Birimbaubolado#3621"]
+  },
   "min_grupo": 3,
   "inicio": "2026-11-16",
   "temporada": {
